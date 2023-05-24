@@ -42,6 +42,9 @@
 *.idb
 *.pdb
 
+# Gameboy Files
+*.gb
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
