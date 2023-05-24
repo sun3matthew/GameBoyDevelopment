@@ -1,0 +1,103 @@
+building:
+rgbasm -L -o hello-world.o hello-world.asm
+
+rgblink -o hello-world.gb hello-world.o
+
+rgbfix -v -p 0xFF hello-world.gb
+gameboy needs a header. -v means it can run, like, verified
+
+decimal
+$hexadecimal
+%binary
+
+
+
+rgblink hello-world.o -m hello-world.map
+generates the range of memory.
+    SECTION: $05a6-$07e5 ($0240 bytes) ["Tilemap"]
+
+
+registers: GPR: a, b, c, d, e, h, l
+    a -> acc
+    bc, de, hl -> can be combined to form 16 bit
+
+
+Comments
+    ; ok.
+
+Instructions
+    directive -> RGBASM shit
+    instruction -> written directly into the rom.
+
+a section is a range of memory, only known at compile time.
+I assume its for some kind of optimization. Like hot access and cold?
+    just assume that one section should contain things that “go together”
+    All instructions must be in a section.
+SECTION "Header", ROM0[$100]
+    you can also have a empty header, the name is just for good code practice
+    ROM0 is memory type:
+        Honestly, idfk what this is.
+    You can force it to start somewhere [$address]
+        $100 - $14f
+    
+
+    ds $150 - @, 0
+        ds is used for statically allocating memory.
+        $150 - @, how many bytes
+        0, what to set the value to.
+    
+    @
+        current memory address
+
+ld a, [de]
+    Each cell has a memory address, from 0 to ~
+        On the gb, each cell is one byte.
+    Two main types of memory on the gb.
+        ROM
+            Memory that you cannot write to.
+                Some old rom is literally acid engraved with data.
+        RAM
+            Memory that you can read and write to.
+        
+        You use one number to access the different types of memory.
+            even if the memory is on different chips.
+            the cpu knows which chip to ask and subtracts accordingly,
+                ie 2719 may be on chip #2, and the address in the chip is 719
+    The gb has 2^16, addresses, 65536, from $0000 to $ffff
+        Start	End	    Name	Description
+        $0000	$7FFF	ROM	    The game ROM, supplied by the cartridge.
+        $8000	$9FFF	VRAM	Video RAM, where graphics are stored and arranged.
+        $A000	$BFFF	SRAM	Save RAM, optionally supplied by the cartridge to save data to.
+        $C000	$DFFF	WRAM	Work RAM, general-purpose RAM for the game to store things in.
+        $FE00	$FE9F	OAM	    Object Attribute Memory, where “objects” are stored.
+        FF00	$FF7F	I/O	    Neither ROM nor RAM, but this is where you control the console.
+        $FF80	$FFFE	HRAM	High RAM, a tiny bit of general-purpose RAM which can be accessed faster.
+        $FFFF	$FFFF	IE	    A lone I/O byte that’s separated from the rest for some reason.
+    57760 of memory that you can actually access, the rest is no touchy, -nintendo
+
+    Labels
+        symbols, attaches a name to a byte of memory
+            MemoryLabel:
+                ; refers to the byte right after itself, (aka the first byte of the instruction of the load under this.)
+                ld a, 0
+        writing out the label name is the same as writing out the address of the byte it goes to.
+
+    Dereference - like c/c++, pointer -> value
+        "read at address ~"
+         ld a, b -> copy b into a
+         ld a, [$5414] -> copy the data stored at address 5414 into a
+            if de contains the value 5414
+            this does the same thing.
+    
+    [hli]
+        short hand for [hl+]
+        incremented just after the memory is accessed.
+            []
+    
+
+        
+
+    
+
+
+
