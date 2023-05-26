@@ -11,10 +11,11 @@ default: hello-world.gb
 kill:
 	pkill java
 
-run: hello-world.gb
+start: hello-world.gb
 	java -jar /Users/mattsun/GameBoy/Emulicious/Emulicious.jar hello-world.gb &
 
 hello-world.gb: hello-world.o
+	rgblink -n hello-world.sym hello-world.o
 	rgblink $(RGBLINKFLAGS) -o hello-world.gb hello-world.o
 	rgbfix $(RGBFIXFLAGS) hello-world.gb
 
@@ -22,4 +23,4 @@ hello-world.o: hello-world.asm hardware.inc
 	rgbasm $(RGBASMFLAGS) -o hello-world.o hello-world.asm
 
 clean:
-	rm -f *.o *.gb
+	rm -f *.o *.gb *sym
