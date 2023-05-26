@@ -95,6 +95,47 @@ ld a, [de]
             []
     
 
+    
+ds $150 - @, 0 ; Make room for the header
+    Zone of memory from $0104 to $014F
+        Hold shit like title, compatibility, size, checksums and power up logos.
+        Only ROMs sent to nintendo have fully correct headers
+            we just need to get it past the boot checks.
+
+        Modern emulators need to know the hardware they need to emulate found in the header.
+
+    Boot ROM    
+        Header is tied to the boot ROM
+            When the console powers up, the cpu starts executing instructions starting at $0000
+                The ROM entry point is $0100
+            Before this is a small program called the boot ROM -> fucking burned into the silicon of the cpu.
+                Does the startup animation but also checks the ROM header.
+                    Verifies the Nintendo Logo and checksums, for piracy and verification.
+
+    rgbfix
+        Writes the ROM's header
+            rgblink does not produce a valid ROM so the rgbfix fixes it.
+        There are many options, for now we only use
+            -v which makes it valid, producing the valid Logo & checksums
+            -p 0xFF pads the ROM to the next valid size, using $FF as the filler byte. 
+        
+        
+Operations & flags:
+    inc: increment
+    dec: decrement
+
+    Flags: special purpose register -> one bit each (I think)
+        Z: zero flag
+        N: addition/subtraction
+        H: Half-carry
+        C: Carry
+    
+    add a, b
+    sub a, b
+    overflows and underflow set/unset the carry flag.
+    cp: compare: a sub without actually doing the sub, instead it sets the Z and C flags.
+        Z is set if a == b, not set otherwise
+        C is set if a < b, else a >= b (like this bc of sub, if set, it became negative)
         
 
     
