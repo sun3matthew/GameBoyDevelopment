@@ -135,10 +135,41 @@ Operations & flags:
     overflows and underflow set/unset the carry flag.
     cp: compare: a sub without actually doing the sub, instead it sets the Z and C flags.
         Z is set if a == b, not set otherwise
-        C is set if a < b, else a >= b (like this bc of sub, if set, it became negative)
+        C is set if a < b, else a >= b (like this bc of sub, if set, it became negative a - b)
         
 
+    PC: Program counter, another special purpose register
+    jp: Jump to location
+    jr: Jump relative
+    call: call a subroutine
+    ret: return from a subroutine
+
+    jp can have a condition:
+        jp z label
+        z: Z is set
+        nz: if Z is not set
+        c: if C is set
+        nc: if C is not set.
+
+Tracing: Dark mode.
+    ctr g -> go to memory address
+    f5: step
+    ctr back -> restart
+    f8: resume
+    f9: pause
+
     
+Gameboy 2BPP:
+    only has 4 colors, therefor you only need "two bits per pixel"
+    Gameboy displays graphics with 8x8 pixel tiles.
+        64 pixels per tile -> 128 bits or 16 bytes per tile.
+    two bytes represent a row.
+        ie: a5, 8b
+            a5: 10100101
+            8b: 10001011
+            dc: 30102123
+    
+    it is much easier to group them in 8x8 pixels and manipulate them instead.
+        you can also increase it to meta tiles and store 16x16
 
-
-
+    
