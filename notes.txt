@@ -172,4 +172,29 @@ Gameboy 2BPP:
     it is much easier to group them in 8x8 pixels and manipulate them instead.
         you can also increase it to meta tiles and store 16x16
 
+Pallets:
+    Three pallets for B&W gameboys:
+        one for background called BGP
+        two for objects, OBP1, OBP2
     
+    0-4, white to black, (different gameboys have different color pallets)
+
+    Encoding:
+        One byte, four group of two bits
+            ie, E4 -> 11-10-01-00
+                1B -> 00-01-10-11
+
+Tilemap:
+    Grid of tiles
+    tiles are referred to by a ID, (idx)
+        ID are stored in bytes, so there are 256 possibly IDs.
+            Some IDs refer to sever tiles at the same time.
+            384 total tiles.
+             blocks of 128, three of them.
+
+
+        
+
+
+
+        
