@@ -20,3 +20,7 @@ main.o: main.asm hardware.inc
 
 clean:
 	rm -f *.o *.gb *sym
+
+force:
+	rm -f *.o *.gb *sym
+	make

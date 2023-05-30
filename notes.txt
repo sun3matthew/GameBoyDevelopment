@@ -42,6 +42,7 @@ SECTION "Header", ROM0[$100]
     
 
     ds $150 - @, 0
+        "define space"
         ds is used for statically allocating memory.
         $150 - @, how many bytes
         0, what to set the value to.
@@ -193,8 +194,13 @@ Tilemap:
              blocks of 128, three of them.
 
 
-        
-
-
-
-        
+hardware.inc
+    When you write code, it usually takes place in the cpu,
+        to access the other shit, you use a MMIO(Memory-mapped IO)
+            memory in certain ranges from $FF00-FF7F, does special shit.
+            They are the middle men between the cpu and hardware.
+                Hardware registers
+    hardware.inc defines a constant for each of the registers.
+        rSTAT -> PPU Status -> bits if info regarding graphics systems.
+            rSTAT -> r stands for register
+            LCDCF -> F stands for flag
