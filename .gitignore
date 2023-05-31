@@ -47,6 +47,7 @@
 # Gameboy Files
 *.gb
 *.sym
+*.2bpp
 
 # Kernel Module Compile Results
 *.mod*

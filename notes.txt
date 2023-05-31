@@ -239,6 +239,12 @@ Vars:
         WRAM -> work RAM
             Starts at C000, goes to CFFF -> D000 to DFFF is weird in CGB
 
+Functions:
+    Factor out code.
+        return -> goes back to where function was called from
+            make sure to have this, otherwise shit goes to hell
+    use with call function
+        its a jump with a push to the stack.
     
 
         
