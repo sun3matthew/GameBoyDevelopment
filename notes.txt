@@ -204,3 +204,42 @@ hardware.inc
         rSTAT -> PPU Status -> bits if info regarding graphics systems.
             rSTAT -> r stands for register
             LCDCF -> F stands for flag
+
+Shit you need to do:
+    Only turn off LCD on VBlank, otherwise it could do physical damage to the gameboy.
+        You turn off the screen whenever you need to load new tiles.
+
+Writing tilemap data
+    Writing shit like db $FF, $00 is very non intuitive,
+    instead,
+    dw `01230123 ; This is equivalent to `db $55,$33`
+    
+
+Objects - OBJ:
+    Shit that are not on the background. Things like cursors or NPCs.
+    Allows drawing of 8x8 or 8x16 pixels at any on screen position.
+        unlike background where it is tiles.
+        Consists of a on-screen position,
+        tile ID
+        attributes
+            flipped, etc,
+    Just like VRAM, there is OAM(Object Attribute Memory)
+    All info is stored in 4 bytes
+        Y, X, id, attributes
+    OAM is 160 bytes long, 40 objects at a time.
+        x & y is actually its (x-8, y-16)(so it can go off screen to the left)
+    
+    On boot up, ORAM might have random values, so clean that shit up by filling it with 0s
+
+    objects and backgrounds use a different set of tiles (for the first 128 IDs) (128-255 is shared by both)
+        
+Vars:
+    User WRAM0
+        ROM -> read only
+        WRAM -> work RAM
+            Starts at C000, goes to CFFF -> D000 to DFFF is weird in CGB
+
+    
+
+        
+

@@ -1078,14 +1078,14 @@ DEF OAMB_BANK1      EQU 3 ; Bank number; 0,1 (GBC)
 
 ; Deprecated constants. Please avoid using.
 
-DEF IEF_LCDC   EQU %00000010 ; LCDC (see STAT)
-DEF _VRAM8000  EQU _VRAM
-DEF _VRAM8800  EQU _VRAM+$800
-DEF _VRAM9000  EQU _VRAM+$1000
-DEF CART_SRAM_2KB   EQU 1 ; 1 incomplete bank
-DEF LCDCF_BG8800  EQU %00000000 ; BG & Window Tile Data Select
-DEF LCDCF_BG8000  EQU %00010000 ; BG & Window Tile Data Select
-DEF LCDCB_BG8000  EQU 4 ; BG & Window Tile Data Select
+;DEF IEF_LCDC   EQU %00000010 ; LCDC (see STAT)
+;DEF _VRAM8000  EQU _VRAM
+;DEF _VRAM8800  EQU _VRAM+$800
+;DEF _VRAM9000  EQU _VRAM+$1000
+;DEF CART_SRAM_2KB   EQU 1 ; 1 incomplete bank
+;DEF LCDCF_BG8800  EQU %00000000 ; BG & Window Tile Data Select
+;DEF LCDCF_BG8000  EQU %00010000 ; BG & Window Tile Data Select
+;DEF LCDCB_BG8000  EQU 4 ; BG & Window Tile Data Select
 
 
     ENDC ;HARDWARE_INC
