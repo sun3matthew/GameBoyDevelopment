@@ -42,6 +42,14 @@ EntryPoint: ;*
 	ld [hli], a
 	ld a, 0
 	ld [hli], a
+	ld [hli], a
+
+	ld a, 120 + 16
+	ld [hli], a
+	ld a, 10 + 8
+	ld [hli], a
+	ld a, 0
+	ld [hli], a
 	ld [hl], a
 
 
@@ -81,7 +89,7 @@ EntryPoint: ;*
 	ld [wFrameCounter], a
 
 
-Main: ;*
+Main: ;*	
     ld a, [rLY]
     cp 144
     jp nc, Main
@@ -89,6 +97,24 @@ Main: ;*
 		ld a, [rLY]
 		cp 144
 		jp c, WaitVBlank2
+	
+	ld a, [wFrameCounter] 
+	add 1
+	ld [wFrameCounter], a
+	cp 2
+	ld a, [_OAMRAM + 1]
+
+	jp z, Flicker
+	add 100
+	ld [_OAMRAM + 4], a
+	jp EndIf
+	Flicker:
+		add 110
+		ld [_OAMRAM + 4], a
+		ld a, 0
+		ld [wFrameCounter], a
+	EndIf:
+
 
 		  
 	call UpdateKeys

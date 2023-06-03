@@ -247,5 +247,34 @@ Functions:
         its a jump with a push to the stack.
     
 
+Color:
+    FF68 - BCPS/BGPI
+        Use this to read and write the color pallet, like use it as the address of the thing
+            8 pallets * 4 colors/pallet * 2 bytes/color = 64 bytes for color ($00-3f)
+                RGB555 -> 15 bit color
+
+    FF69 - BCPD/BGPD
+        (one byte)
+        Address $0 and $1 access the first color of the first pallet
+            0000 0000 0000 0000
+            rrrr rggg ggbb bbb~
+            
+    FF6A-FF6B -> OCPS/OBPI-OCPD/OBPD (same but for objects)
+        also 64 bytes.
+        color #0 is always transparent, never used.
+    
+    BG Map Attributes:
+        a bunch of bits, the VRAM Bank1 of the tilemap. (Two bytes per tile (idx, attributes))
+            bits 2-0 is the background pallet to use (0-7)
+        idk how the bank thing works yet, but you can only read/write at the right times.
+            0:9800 -> idx
+            1:9800 -> attributes
+    
+    OAM Attributes:
+        Byte 4 is the attributes/flags
+            bit 2-0 -> pallet to use (OBP0-7)
+            bit 4 is pallet number for non CGB
+
+
         
 
