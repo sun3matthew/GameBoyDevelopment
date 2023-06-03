@@ -1,8 +1,4 @@
-INCLUDE "hardware.inc"
-
-INCLUDE "utils.asm"
-INCLUDE "graphics.asm"
-
+INCLUDE "inc/hardware.inc"
 
 SECTION "Header", ROM0[$100]
 
@@ -100,7 +96,4 @@ Main: ;*
 SECTION "Counter", WRAM0
 	wFrameCounter: db
 
-SECTION "Input Variables", WRAM0
-	wCurKeys: db
-	wNewKeys: db
 	

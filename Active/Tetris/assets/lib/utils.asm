@@ -1,12 +1,11 @@
-IF !DEF(UTILS_ASM) ;include guard
-    DEF UTILS_ASM EQU 1
+INCLUDE "inc/hardware.inc"
 
 SECTION "MemCopy Routine", ROM0
 ; Copy bytes from one area to another.
 ; @param de: Source
 ; @param hl: Destination
 ; @param bc: Length
-Memcopy:
+Memcopy::
     ld a, [de]
     ld [hli], a
     inc de
@@ -17,7 +16,7 @@ Memcopy:
     ret
     
 SECTION "Input Routine", ROM0
-UpdateKeys:
+UpdateKeys::
 	; Poll half the controller
 	ld a, P1F_GET_BTN
 	call .onenibble
@@ -53,4 +52,6 @@ UpdateKeys:
   .knownret
 	ret
 
-    ENDC ;UTILS_ASM
+SECTION "Input Variables", WRAM0
+	wCurKeys:: db
+	wNewKeys:: db
