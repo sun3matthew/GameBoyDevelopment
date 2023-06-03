@@ -49,6 +49,9 @@
 *.sym
 *.2bpp
 
+# Java Files
+*.class
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
