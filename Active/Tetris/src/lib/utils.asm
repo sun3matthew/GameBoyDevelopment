@@ -14,10 +14,10 @@ Memcopy::
     or a, c
     jp nz, Memcopy
     ret
-   
-
+    
 SECTION "Input Routine", ROM0
 UpdateKeys::
+	
 	; Poll half the controller
 	ld a, P1F_GET_BTN
 	call .onenibble

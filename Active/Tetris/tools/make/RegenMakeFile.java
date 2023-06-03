@@ -1,4 +1,3 @@
-
 import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
@@ -18,7 +17,7 @@ public class RegenMakeFile {
      }
     public static void main(String[] args) {
         try{
-            File makeFile = new File("../../assets/Makefile");
+            File makeFile = new File("Makefile");
             Scanner reader = new Scanner(makeFile);
             String data = "";
             while (reader.hasNextLine())
@@ -59,9 +58,9 @@ public class RegenMakeFile {
 
             ArrayList<String> paths = new ArrayList<String>();
 
-            listOfFiles(paths, new File("../../assets"));
+            listOfFiles(paths, new File("."));
             for(int i = 0; i < paths.size(); i++)
-                paths.set(i, paths.get(i).replace("../../assets/", ""));
+                paths.set(i, paths.get(i).replace("./", ""));
 
             ArrayList<String> asmFiles = new ArrayList<String>();
             ArrayList<String> objFiles = new ArrayList<String>();
@@ -75,6 +74,7 @@ public class RegenMakeFile {
             }
 
             String lineBuffer = "";
+            newLines.add("");
 
             lineBuffer = "../build/$(MAIN).gb: ";
             for(int i = 0; i < objFiles.size(); i++)
@@ -86,6 +86,8 @@ public class RegenMakeFile {
 
             for(int i = 0; i < objFiles.size(); i++){
                 lineBuffer = "\t\t../tmp/" + objFiles.get(i) + " \\";
+                if(i == objFiles.size() - 1)
+                    lineBuffer = lineBuffer.substring(0, lineBuffer.length() - 2);
                 newLines.add(lineBuffer);
             }
 
@@ -106,7 +108,7 @@ public class RegenMakeFile {
             for(int i = 0; i < newLines.size(); i++)
                 data += newLines.get(i) + "\n";
 
-            FileWriter writer = new FileWriter("../../assets/Makefile");
+            FileWriter writer = new FileWriter("Makefile");
             writer.write(data);
             writer.close();
         }catch(IOException e){
