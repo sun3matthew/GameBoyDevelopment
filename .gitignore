@@ -48,6 +48,7 @@
 *.gb
 *.sym
 *.2bpp
+*.pal
 
 # Java Files
 *.class
