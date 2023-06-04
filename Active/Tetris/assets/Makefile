@@ -17,6 +17,8 @@ start: ../build/$(MAIN).gb
 clean:
 	find .. -name "*.o" -type f -delete
 	find .. -name "*.gb" -type f -delete
+	find .. -name "*.2bpp" -type f -delete
+	find .. -name "*.pal" -type f -delete
 
 force:
 	make regen
@@ -26,9 +28,14 @@ force:
 regen:
 	java ../tools/make/RegenMakeFile.java
 
+
+
+graphics/bin/tile.2bpp graphics/bin/tile.pal: graphics/raw/tile.png
+	java ../tools/graphics/PngToBin.java graphics/raw/tile.png graphics/bin/tile.2bpp graphics/bin/tile.pal
+
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/utils.o ../tmp/graphics.o ../tmp/tetris.o 
+../build/$(MAIN).gb: inc/hardware.inc ../tmp/utils.o ../tmp/graphics.o ../tmp/tetris.o graphics/bin/tile.2bpp graphics/bin/tile.pal
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/utils.o \
 		../tmp/graphics.o \

@@ -64,12 +64,27 @@ public class RegenMakeFile {
 
             ArrayList<String> asmFiles = new ArrayList<String>();
             ArrayList<String> objFiles = new ArrayList<String>();
+
+            ArrayList<String> incFiles = new ArrayList<String>();
+
+            ArrayList<String> pngFiles = new ArrayList<String>();
+            ArrayList<String> tbppFiles = new ArrayList<String>();//2bpp
+            ArrayList<String> palFiles = new ArrayList<String>();//2bpp
             for(int i = 0; i < paths.size(); i++){
                 if(paths.get(i).contains(".asm")){
                     asmFiles.add(paths.get(i));
                     String objFile = paths.get(i).replace(".asm", ".o");
                     objFile = objFile.substring(objFile.lastIndexOf("/") + 1);
                     objFiles.add(objFile);
+                }else if(paths.get(i).contains(".inc")){
+                    incFiles.add(paths.get(i));
+                }else if(paths.get(i).contains(".png")){
+                    pngFiles.add(paths.get(i));
+                    String tbppFile = paths.get(i).replace(".png", ".2bpp");
+                    tbppFile = tbppFile.replace("raw", "bin");
+                    tbppFiles.add(tbppFile);
+                    String palFile = tbppFile.replace(".2bpp", ".pal");
+                    palFiles.add(palFile);
                 }
             }
 
@@ -77,8 +92,15 @@ public class RegenMakeFile {
             newLines.add("");
 
             lineBuffer = "../build/$(MAIN).gb: ";
+            for(int i = 0; i < incFiles.size(); i++)
+                lineBuffer += incFiles.get(i) + " ";
             for(int i = 0; i < objFiles.size(); i++)
                 lineBuffer += "../tmp/" + objFiles.get(i) + " ";
+            for(int i = 0; i < tbppFiles.size(); i++)
+                lineBuffer += tbppFiles.get(i) + " ";
+            for(int i = 0; i < palFiles.size(); i++)
+                lineBuffer += palFiles.get(i) + " ";
+
             newLines.add(lineBuffer);
 
             lineBuffer = "\trgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \\";
@@ -100,6 +122,16 @@ public class RegenMakeFile {
                 lineBuffer = "../tmp/" + objFiles.get(i) + ": " + asmFiles.get(i);
                 newLines.add(lineBuffer);
                 lineBuffer = "\trgbasm $(RGBASMFLAGS) -o ../tmp/" + objFiles.get(i) + " " + asmFiles.get(i);
+                newLines.add(lineBuffer);
+                newLines.add("");
+            }
+
+            newLines.add("");
+
+            for(int i = 0; i < pngFiles.size(); i++){
+                lineBuffer = tbppFiles.get(i) + " " + palFiles.get(i) + ": " + pngFiles.get(i);
+                newLines.add(lineBuffer);
+                lineBuffer = "\t" + "java ../tools/graphics/PngToBin.java " + pngFiles.get(i) + " " + tbppFiles.get(i) + " " + palFiles.get(i);
                 newLines.add(lineBuffer);
                 newLines.add("");
             }
