@@ -1,5 +1,17 @@
 INCLUDE "inc/hardware.inc"
 
+SECTION "ColorPaletteCopy Routine", ROM0
+; Copy bytes from one area to another.
+; @param hl: Source
+PaletteCopy::
+	ld b, 8
+	.loop
+		ld a, [hli]
+		ld [rBCPD], a
+		dec b
+		jr nz, .loop
+    ret
+
 SECTION "MemCopy Routine", ROM0
 ; Copy bytes from one area to another.
 ; @param de: Source

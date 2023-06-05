@@ -2,7 +2,7 @@ EMULICIOUS = /Users/mattsun/GameBoy/Emulicious/Emulicious.jar
 
 RGBASMFLAGS = -L
 RGBLINKFLAGS =
-RGBFIXFLAGS = -v -p 0xFF
+RGBFIXFLAGS = -v -C -p 0xFF
 
 MAIN = tetris
 
@@ -17,11 +17,18 @@ start: ../build/$(MAIN).gb
 clean:
 	find .. -name "*.o" -type f -delete
 	find .. -name "*.gb" -type f -delete
+
+cleang:
 	find .. -name "*.2bpp" -type f -delete
 	find .. -name "*.pal" -type f -delete
 
 force:
 	make regen
+	make clean
+	make cleang
+	make
+
+soft:
 	make clean
 	make
 
@@ -30,12 +37,9 @@ regen:
 
 
 
-graphics/bin/tile.2bpp graphics/bin/tile.pal: graphics/raw/tile.png
-	java ../tools/graphics/PngToBin.java graphics/raw/tile.png graphics/bin/tile.2bpp graphics/bin/tile.pal
-
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: inc/hardware.inc ../tmp/utils.o ../tmp/graphics.o ../tmp/tetris.o graphics/bin/tile.2bpp graphics/bin/tile.pal
+../build/$(MAIN).gb: inc/hardware.inc graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris.pal ../tmp/utils.o ../tmp/graphics.o ../tmp/tetris.o 
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/utils.o \
 		../tmp/graphics.o \
@@ -50,4 +54,17 @@ graphics/bin/tile.2bpp graphics/bin/tile.pal: graphics/raw/tile.png
 
 ../tmp/tetris.o: src/tetris.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
+
+
+graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal: graphics/raw/BG-2.png
+	java ../tools/graphics/PngToBin.java graphics/raw/BG-2.png graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal
+
+graphics/bin/BG-3.2bpp graphics/bin/BG-3.pal: graphics/raw/BG-3.png
+	java ../tools/graphics/PngToBin.java graphics/raw/BG-3.png graphics/bin/BG-3.2bpp graphics/bin/BG-3.pal
+
+graphics/bin/BG-1.2bpp graphics/bin/BG-1.pal: graphics/raw/BG-1.png
+	java ../tools/graphics/PngToBin.java graphics/raw/BG-1.png graphics/bin/BG-1.2bpp graphics/bin/BG-1.pal
+
+graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal: graphics/raw/Tetris.png
+	java ../tools/graphics/PngToBin.java graphics/raw/Tetris.png graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal
 
