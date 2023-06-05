@@ -15,10 +15,7 @@ EntryPoint: ;*
 		ld [rNR52], a
 
 	; Turn off lcd on blank
-		WaitVBlank:
-			ld a, [rLY]
-			cp 144
-			jp c, WaitVBlank
+		call WaitVBlank
 
 		; Turn the LCD off
 		ld a, 0
@@ -27,13 +24,16 @@ EntryPoint: ;*
 	;* screen must be off to access OAM and VRAM
 	
 	; clean up the OAM
-	ld a, 0
-    ld b, 160
+	ld d, 0
+    ld bc, 160
     ld hl, _OAMRAM
-	ClearOam:
-		ld [hli], a
-		dec b
-		jp nz, ClearOam
+	call MemSet
+    
+	ld bc, 160
+    ld hl, wShadowOAM
+	call MemSet
+	
+
 
 ; create a object
 	ld hl, _OAMRAM
@@ -79,9 +79,17 @@ EntryPoint: ;*
 	ld [rBCPS], a
 
 	ld hl, Palette
+	ld de, rBCPD
 	call PaletteCopy
 	call PaletteCopy
 	call PaletteCopy
+	call PaletteCopy
+
+	ld a, OCPSF_AUTOINC
+	ld [rOCPS], a
+
+	ld hl, Palette + 24
+	ld de, rOCPD
 	call PaletteCopy
 
 ; Turn the LCD on
@@ -95,15 +103,24 @@ EntryPoint: ;*
 	ld [wFrameCounter], a
 */
 
+call CopyDMARoutine
+
 
 Main: ;*	
-    ld a, [rLY]
-    cp 144
-    jp nc, Main
-	WaitVBlank2:
-		ld a, [rLY]
-		cp 144
-		jp c, WaitVBlank2
+	call WaitVBlank
+	
+	ld hl, wShadowOAM
+	ld a, [hl]
+	inc a
+	ld [hli], a
+	ld a, [hl]
+	inc a
+	inc a
+	inc a
+	ld [hli], a
+
+	ld a, HIGH(wShadowOAM)
+	call hOAMDMA
 		
 	jp Main
 

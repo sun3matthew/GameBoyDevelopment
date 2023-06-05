@@ -59,6 +59,17 @@ public class PngToBin {
         return -1;
     }
 
+    /*public static int getTile(ArrayList<Byte> tileData){
+        int tile = 0;
+        for(int row = tileY; row < tileY + 8; row++){
+            for(int col = tileX; col < tileX + 8; col++){
+                tile <<= 2;
+                tile |= pixelArray[row][col][3] == 0 ? 0 : 1;
+            }
+        }
+        return tile;
+    }*/
+
     public static void main(String[] args) {
         int[][][] pixelArray = readImage(args[0]);
         ArrayList<Byte> data = new ArrayList<Byte>();
@@ -127,8 +138,9 @@ public class PngToBin {
         */
 
         //each tile is 8x8
+
+        //ArrayList<Byte> tileMap = new ArrayList<Byte>();
         ArrayList<Byte> tbpp = new ArrayList<Byte>();
-        int numTiles = (pixelArray.length / 8) * (pixelArray[0].length / 8);
         for(int tileY = 0; tileY < pixelArray.length; tileY += 8){
             for(int tileX = 0; tileX < pixelArray[0].length; tileX += 8){
                 //System.out.println("Tile: " + tileX + " " + tileY);
@@ -158,14 +170,14 @@ public class PngToBin {
 
         writeBinaryFile(tbpp, args[1]);
 
-        // 15-bit color little endian
+        // 15-bit color 
         // 0-4 red, 5-9 green, 10-14 blue
         ArrayList<Byte> colorPallet = new ArrayList<Byte>();
         for(int i = 0; i < colors.length; i++){
             int red = colors[i][0] >> 3;
             int green = colors[i][1] >> 3;
             int blue = colors[i][2] >> 3;
-            int color = (blue << 11) | (green << 6) | (red << 1);
+            int color = (blue << 10) | (green << 5) | (red);
             colorPallet.add((byte)(color & 0xff));
             colorPallet.add((byte)((color >> 8) & 0xff));
         }

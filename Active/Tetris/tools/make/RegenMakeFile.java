@@ -94,12 +94,12 @@ public class RegenMakeFile {
             lineBuffer = "../build/$(MAIN).gb: ";
             for(int i = 0; i < incFiles.size(); i++)
                 lineBuffer += incFiles.get(i) + " ";
-            for(int i = 0; i < objFiles.size(); i++)
-                lineBuffer += "../tmp/" + objFiles.get(i) + " ";
             for(int i = 0; i < tbppFiles.size(); i++)
                 lineBuffer += tbppFiles.get(i) + " ";
             for(int i = 0; i < palFiles.size(); i++)
                 lineBuffer += palFiles.get(i) + " ";
+            for(int i = 0; i < objFiles.size(); i++)
+                lineBuffer += "../tmp/" + objFiles.get(i) + " ";
 
             newLines.add(lineBuffer);
 
