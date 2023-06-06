@@ -47,14 +47,16 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetris.o ../tmp/vars.o 
+../build/$(MAIN).gb: ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/utils.o \
 		../tmp/input.o \
 		../tmp/dma.o \
+		../tmp/rng.o \
 		../tmp/math.o \
 		../tmp/graphics.o \
+		../tmp/tetrominos.o \
 		../tmp/tetris.o \
 		../tmp/vars.o
 	rgbfix $(RGBFIXFLAGS) ../build/$(MAIN).gb
@@ -71,11 +73,17 @@ regen:
 ../tmp/dma.o: lib/dma.asm inc/dma.inc inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/dma.o lib/dma.asm
 
+../tmp/rng.o: lib/rng.asm
+	rgbasm $(RGBASMFLAGS) -o ../tmp/rng.o lib/rng.asm
+
 ../tmp/math.o: lib/math.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
 ../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris.pal
 	rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
+
+../tmp/tetrominos.o: src/tetrominos.asm
+	rgbasm $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
 
 ../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/dma.inc inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm

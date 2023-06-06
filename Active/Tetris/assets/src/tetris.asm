@@ -26,6 +26,9 @@ EntryPoint: ;*
 		ld [rLCDC], a
 		
 	;* screen must be off to access OAM and VRAM
+
+	; init rng
+	call InitRNG
 	
 	; clean up the OAM
 	ld d, 0
@@ -34,12 +37,13 @@ EntryPoint: ;*
 	call MemSet
     
 	; clean up the Board
-	ld bc, WBOARDS
+	ld bc, BOARD_SIZE
 	ld hl, wBoard
 	call MemSet	
 
 
 ; create a object
+/*
 	ld hl, _OAMRAM
 	ld a, 128 + 16 ; y
 	ld [hli], a
@@ -48,6 +52,7 @@ EntryPoint: ;*
 	ld a, 0
 	ld [hli], a ; tileIdx
 	ld [hli], a ; flags
+*/
 
 ; Copy the tetris data
     ld de, TetrisB
@@ -117,6 +122,8 @@ EntryPoint: ;*
 
 Main:
 	; Buffer Time
+	/*
+
 	ld a, [wFrameCounter]
 	inc a
 
@@ -133,9 +140,13 @@ Main:
 		ld a, 0
 	.updatePosEnd
 	ld [wFrameCounter], a
+	*/
+	call Rand
+	ld a, h
+	ld [wShadowOAM], a
+	ld a, l
+	ld [wShadowOAM+1], a
 
-	ld a, $03
-	ld [wShadowSCN_B0], a
 	
 	call WaitVBlank
 	call DMATransfer
