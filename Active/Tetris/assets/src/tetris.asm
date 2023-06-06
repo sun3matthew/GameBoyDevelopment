@@ -1,4 +1,6 @@
 INCLUDE "inc/hardware.inc"
+INCLUDE "inc/dma.inc"
+
 INCLUDE "inc/tetris.inc"
 
 SECTION "Header", ROM0[$100]
@@ -31,24 +33,10 @@ EntryPoint: ;*
     ld hl, _OAMRAM
 	call MemSet
     
-	ld bc, SOAMS
-    ld hl, wShadowOAM
-	call MemSet
-
 	; clean up the Board
 	ld bc, WBOARDS
 	ld hl, wBoard
-	call MemSet
-
-	; clean up the Shadow Tilemaps
-	ld bc, SSCRNS
-	ld hl, wShadowSCN_B0
-	call MemSet
-
-	ld bc, SSCRNS
-	ld hl, wShadowSCN_B1
-	call MemSet
-	
+	call MemSet	
 
 
 ; create a object
@@ -80,11 +68,6 @@ EntryPoint: ;*
     ld hl, _SCRN0
 	call Memcopy
 
-; Init Shadow Vram Tilemap
-	ld de, _SCRN0
-	ld hl, wShadowSCN_B0
-	ld bc, SSCRNS
-	call MemcopyLen
 
 ; Copy the tilemap attributes
 	ld a, 1
@@ -95,41 +78,35 @@ EntryPoint: ;*
 	ld hl, _SCRN0
 	call Memcopy
 
-; Init Shadow Vram Tilemap attributes
-	ld de, _SCRN0
-	ld hl, wShadowSCN_B1
-	ld bc, SSCRNS
-	call MemcopyLen
-
-
 
 
 ; Load Color pallet
-	ld a, BCPSF_AUTOINC
-	ld [rBCPS], a
+	; Load BG pallet
+		ld a, BCPSF_AUTOINC
+		ld [rBCPS], a
 
-	ld hl, Palette
-	ld de, rBCPD
-	call PaletteCopy
-	call PaletteCopy
-	call PaletteCopy
-	call PaletteCopy
+		ld hl, Palette
+		ld de, rBCPD
+		call PaletteCopy
+		call PaletteCopy
+		call PaletteCopy
+		call PaletteCopy
 
-	ld a, OCPSF_AUTOINC
-	ld [rOCPS], a
+	; Load Object pallet
+		ld a, OCPSF_AUTOINC
+		ld [rOCPS], a
 
-	ld hl, Palette + 24
-	ld de, rOCPD
-	call PaletteCopy
+		ld hl, Palette + 24
+		ld de, rOCPD
+		call PaletteCopy
 
 
 ; Init vars
 	ld a, 0
 	ld [wFrameCounter], a
 
-
-call CopyDMARoutine
-
+; Init DMA
+	call InitDMA
 
 
 ; Turn the LCD on
@@ -143,7 +120,7 @@ Main:
 	ld a, [wFrameCounter]
 	inc a
 
-	cp 10
+	cp 1
 	jr nz, .updatePosEnd
 		ld hl, wShadowOAM
 		ld a, [hl]
@@ -160,30 +137,8 @@ Main:
 	ld a, $03
 	ld [wShadowSCN_B0], a
 	
-	
-	; DMA Transfers
 	call WaitVBlank
-
-	ld a, 0
-	ld [rVBK], a
-
-	ld de, wShadowSCN_B0
-	ld hl, _SCRN0
-	ld b, SSCRNSL
-	call VRAMDMA
-
-	ld a, 1
-	ld [rVBK], a
-
-	ld de, wShadowSCN_B1
-	ld hl, _SCRN0
-	ld b, SSCRNSL
-	call VRAMDMA
-
-
-	ld a, HIGH(wShadowOAM)
-	call hOAMDMA
-
+	call DMATransfer
 		
 	jp Main
 
