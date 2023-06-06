@@ -1,0 +1,10 @@
+IF !DEF(TETRIS_INC) ;include guard
+    DEF TETRIS_INC EQU 1
+
+
+DEF SSCRNS        EQU 16 * 2 * 18
+DEF SOAMS        EQU 40 * 4
+DEF WBOARDS      EQU 10 * 18
+DEF SSCRNSL       EQU SSCRNS / 16 - 1
+
+    ENDC ;HARDWARE_INC8

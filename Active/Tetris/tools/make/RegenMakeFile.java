@@ -120,6 +120,28 @@ public class RegenMakeFile {
 
             for(int i = 0; i < asmFiles.size(); i++){
                 lineBuffer = "../tmp/" + objFiles.get(i) + ": " + asmFiles.get(i);
+
+                File asmFile = new File(asmFiles.get(i));
+                String asmData = "";
+                Scanner asmReader = new Scanner(asmFile);
+
+                boolean done = false;
+                while(asmReader.hasNextLine() && !done){
+                    String line = asmReader.nextLine();
+                    done = true;
+                    if(line.length() == 0 || line.contains("INCLUDE")){
+                        asmData += line + "\n";
+                        done = false;
+                    }
+                }
+                asmReader.close();
+
+                for(int j = 0; j < incFiles.size(); j++)
+                    if(asmData.contains("INCLUDE \"" + incFiles.get(j) + "\""))
+                        lineBuffer += " " + incFiles.get(j);
+
+
+
                 newLines.add(lineBuffer);
                 lineBuffer = "\trgbasm $(RGBASMFLAGS) -o ../tmp/" + objFiles.get(i) + " " + asmFiles.get(i);
                 newLines.add(lineBuffer);

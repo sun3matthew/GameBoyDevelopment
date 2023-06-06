@@ -13,19 +13,29 @@ PaletteCopy::
 		jr nz, .loop
     ret
 
-SECTION "MemCopy Routine", ROM0
+SECTION "MemCopyLen Routine", ROM0
 ; Copy bytes from one area to another.
 ; @param de: Source
 ; @param hl: Destination
 ; @param bc: Length
-Memcopy::
+MemcopyLen::
     ld a, [de]
     ld [hli], a
     inc de
-    dec bc ;? does not set any flags
+    dec bc
     ld a, b
     or a, c
-    jp nz, Memcopy
+    jp nz, MemcopyLen
+    ret
+
+SECTION "MemCopy Routine", ROM0
+; Copy bytes from one area to another.
+; @param de: Source
+; @param bc: End
+; @param hl: Destination
+Memcopy::
+    call SUBr16r16
+    call MemcopyLen
     ret
 
 SECTION "MemSet Routine", ROM0
