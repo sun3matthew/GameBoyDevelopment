@@ -92,12 +92,14 @@ public class RegenMakeFile {
             newLines.add("");
 
             lineBuffer = "../build/$(MAIN).gb: ";
+            /*
             for(int i = 0; i < incFiles.size(); i++)
                 lineBuffer += incFiles.get(i) + " ";
             for(int i = 0; i < tbppFiles.size(); i++)
                 lineBuffer += tbppFiles.get(i) + " ";
             for(int i = 0; i < palFiles.size(); i++)
                 lineBuffer += palFiles.get(i) + " ";
+            */
             for(int i = 0; i < objFiles.size(); i++)
                 lineBuffer += "../tmp/" + objFiles.get(i) + " ";
 
@@ -126,19 +128,30 @@ public class RegenMakeFile {
                 Scanner asmReader = new Scanner(asmFile);
 
                 boolean done = false;
+                boolean scanFullFile = false;
                 while(asmReader.hasNextLine() && !done){
                     String line = asmReader.nextLine();
                     done = true;
-                    if(line.length() == 0 || line.contains("INCLUDE")){
+                    if(line.contains("SCAN_FULL_FILE"))
+                        scanFullFile = true;
+                    if(line.length() == 0 || line.contains("INCLUDE") || line.contains("INCBIN")){
                         asmData += line + "\n";
                         done = false;
                     }
+                    if(scanFullFile)
+                        done = false;
                 }
                 asmReader.close();
 
                 for(int j = 0; j < incFiles.size(); j++)
                     if(asmData.contains("INCLUDE \"" + incFiles.get(j) + "\""))
                         lineBuffer += " " + incFiles.get(j);
+                for(int j = 0; j < tbppFiles.size(); j++)
+                    if(asmData.contains("INCBIN \"" + tbppFiles.get(j) + "\""))
+                        lineBuffer += " " + tbppFiles.get(j);
+                for(int j = 0; j < palFiles.size(); j++)
+                    if(asmData.contains("INCBIN \"" + palFiles.get(j) + "\""))
+                        lineBuffer += " " + palFiles.get(j);
 
 
 

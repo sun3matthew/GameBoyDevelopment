@@ -1,3 +1,4 @@
+; SCAN_FULL_FILE
 
 SECTION "Graphics", ROM0
 TetrisB::

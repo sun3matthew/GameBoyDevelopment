@@ -14,23 +14,31 @@ kill:
 start: ../build/$(MAIN).gb
 	java -jar $(EMULICIOUS) ../build/$(MAIN).gb &
 
-clean:
+cleanCode:
 	find .. -name "*.o" -type f -delete
 	find .. -name "*.gb" -type f -delete
 
-cleang:
+cleanGraphics:
 	find .. -name "*.2bpp" -type f -delete
 	find .. -name "*.pal" -type f -delete
 
-force:
-	make regen
-	make clean
-	make cleang
+clean:
+	make cleanCode
+	make cleanGraphics
+
+forceCode:
+	make cleanCode
 	make
 
-soft:
-	make clean
+forceGraphics:
+	make cleanGraphics
 	make
+
+
+force:
+	make regen
+	make forceCode
+	make forceGraphics
 
 regen:
 	java ../tools/make/RegenMakeFile.java
@@ -39,7 +47,7 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: inc/tetris.inc inc/dma.inc inc/hardware.inc graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris.pal ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetris.o ../tmp/vars.o 
+../build/$(MAIN).gb: ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetris.o ../tmp/vars.o 
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/utils.o \
@@ -66,7 +74,7 @@ regen:
 ../tmp/math.o: lib/math.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
-../tmp/graphics.o: src/graphics.asm
+../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris.pal
 	rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/dma.inc inc/hardware.inc
