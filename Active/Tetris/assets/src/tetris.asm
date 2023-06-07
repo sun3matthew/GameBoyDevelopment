@@ -122,8 +122,8 @@ EntryPoint: ;*
 
 Main:
 	; Buffer Time
-	/*
 
+	/*
 	ld a, [wFrameCounter]
 	inc a
 
@@ -141,11 +141,57 @@ Main:
 	.updatePosEnd
 	ld [wFrameCounter], a
 	*/
+
+	
+	/*
 	call Rand
 	ld a, h
 	ld [wShadowOAM], a
 	ld a, l
 	ld [wShadowOAM+1], a
+	*/
+
+	ld bc, 13
+	ld de, SCRN_VX_B
+	call MULr16R16
+
+	ld de, BOARD_LEFT + 1
+	call ADDr16r16
+
+	ld d, b
+	ld e, c
+
+	push bc
+	ld bc, wShadowSCN_B0
+	call ADDr16r16
+	ld h, b
+	ld l, c
+	pop bc
+
+	push bc
+	ld bc, wShadowSCN_B1
+	call ADDr16r16
+	ld d, b
+	ld e, c
+	pop bc
+
+	ld a, BOARD_WIDTH
+	.rowLoop
+		dec a
+
+		ld [hl], $03
+		push hl
+		ld h, d
+		ld l, e
+		ld [hl], $03
+		pop hl
+
+		inc hl
+		inc de
+		jp nz, .rowLoop
+		
+
+
 
 	
 	call WaitVBlank

@@ -4,6 +4,7 @@ SECTION "RNG SEED", HRAM
     RNGSEED: ds 4
 
 SECTION "RNG", ROM0
+
 ; generate 4 bytes of randomness from semi random initial wram trash and store them in RNGSEED
 InitRNG::
     ld de, RNGSEED              
