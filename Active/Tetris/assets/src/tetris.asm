@@ -109,6 +109,7 @@ EntryPoint: ;*
 ; Init vars
 	ld a, 0
 	ld [wFrameCounter], a
+	ld [wRowCounter], a
 
 ; Init DMA
 	call InitDMA
@@ -122,36 +123,52 @@ EntryPoint: ;*
 
 Main:
 	; Buffer Time
+	ld a, [wRowCounter]
 
-	/*
-	ld a, [wFrameCounter]
+	ld b, $01
+	ld c, $01
+	call DrawRow
+
+	ld a, [wRowCounter]
+
 	inc a
+	cp BOARD_HEIGHT
+	jr nz, .resetEnd
 
-	cp 1
-	jr nz, .updatePosEnd
-		ld hl, wShadowOAM
-		ld a, [hl]
-		inc a
-		ld [hli], a
-		ld a, [hl]
-		inc a
-		ld [hli], a
-
+	;.reset:
 		ld a, 0
-	.updatePosEnd
-	ld [wFrameCounter], a
-	*/
+	.resetEnd:
+
+	ld [wRowCounter], a
+
+	ld b, $03
+	ld c, $03
+	call DrawRow
+
+
+
+
+		
+
+
 
 	
-	/*
-	call Rand
-	ld a, h
-	ld [wShadowOAM], a
-	ld a, l
-	ld [wShadowOAM+1], a
-	*/
+	call WaitVBlank
+	call DMATransfer
+		
+	jp Main
 
-	ld bc, 13
+
+; Draw a row
+; @param a: row
+; @param b: tileIdx
+; @param c: tileAttr
+DrawRow:
+	push bc
+
+	ld b, 0
+	ld c, a
+
 	ld de, SCRN_VX_B
 	call MULr16R16
 
@@ -175,28 +192,21 @@ Main:
 	ld e, c
 	pop bc
 
+	pop bc
+
 	ld a, BOARD_WIDTH
 	.rowLoop
 		dec a
 
-		ld [hl], $03
+		ld [hl], b
 		push hl
 		ld h, d
 		ld l, e
-		ld [hl], $03
+		ld [hl], c
 		pop hl
 
 		inc hl
 		inc de
 		jp nz, .rowLoop
-		
-
-
-
 	
-	call WaitVBlank
-	call DMATransfer
-		
-	jp Main
-
-	
+	ret
