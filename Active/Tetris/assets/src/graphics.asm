@@ -17,6 +17,13 @@ Palette::
 	INCBIN "graphics/bin/BG-2.pal"
 	INCBIN "graphics/bin/BG-3.pal"
 	INCBIN "graphics/bin/Tetris.pal"
+	INCBIN "graphics/bin/Tetris-p1.pal"	
+	INCBIN "graphics/bin/Tetris-p1.pal"	
+	INCBIN "graphics/bin/Tetris-p2.pal"	
+	INCBIN "graphics/bin/Tetris-p3.pal"	
+	INCBIN "graphics/bin/Tetris-p4.pal"	
+	INCBIN "graphics/bin/Tetris-p5.pal"	
+	INCBIN "graphics/bin/Tetris-p6.pal"	
 PaletteEnd::
 
 SECTION "TileMaps", ROM0
