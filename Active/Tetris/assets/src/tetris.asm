@@ -97,11 +97,16 @@ EntryPoint: ;*
 		call PaletteCopy
 		call PaletteCopy
 
+		call PaletteCopy
+		call PaletteCopy
+		call PaletteCopy
+
 	; Load Object pallet
 		ld a, OCPSF_AUTOINC
 		ld [rOCPS], a
 
 		ld hl, Palette + 24
+
 		ld de, rOCPD
 		call PaletteCopy
 
@@ -110,6 +115,7 @@ EntryPoint: ;*
 	ld a, 0
 	ld [wFrameCounter], a
 	ld [wRowCounter], a
+	ld [wColorCounter], a
 
 ; Init DMA
 	call InitDMA
@@ -123,6 +129,11 @@ EntryPoint: ;*
 
 Main:
 	; Buffer Time
+	ld a, [wFrameCounter]
+	cp 0
+	jp nz, .skipDrawRow
+
+
 	ld a, [wRowCounter]
 
 	ld b, $01
@@ -145,16 +156,62 @@ Main:
 	ld c, $03
 	call DrawRow
 
+	.skipDrawRow
 
 
+	call WaitVBlank
+	call DMATransfer
 
-		
+	ld a, [wFrameCounter]
+	cp 0
+	jp nz, .skipDrawColor
+
+	ld a, BCPSF_AUTOINC
+	add 24
+	ld [rBCPS], a
+
+	ld hl, Palette + 24
+
+	ld b, h
+	ld c, l
+
+	ld a, [wColorCounter]
+	ld d, 0
+	ld e, a
+
+	sla e
+	sla e
+	sla e
+
+	call ADDr16r16
+
+	ld h, b
+	ld l, c
+	ld de, rBCPD
+	call PaletteCopy
+
+	ld a, [wColorCounter]
+	inc a
+	cp 6
+	jp nz, .resetColorEnd
+		ld a, 0
+	.resetColorEnd:
+	ld [wColorCounter], a
+
+	.skipDrawColor
+
+	ld a, [wFrameCounter]
+	inc a
+	cp 4
+	jp nz, .resetFrameEnd
+		ld a, 0
+	.resetFrameEnd:
+	ld [wFrameCounter], a
+
 
 
 
 	
-	call WaitVBlank
-	call DMATransfer
 		
 	jp Main
 
