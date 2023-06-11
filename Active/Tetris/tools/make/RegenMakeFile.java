@@ -54,13 +54,13 @@ public class RegenMakeFile {
 
                 ../tmp/graphics.o: src/graphics.asm
                     rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
-             */
+            */
 
             ArrayList<String> paths = new ArrayList<String>();
 
-            listOfFiles(paths, new File("."));
+            listOfFiles(paths, new File(args[0]));
             for(int i = 0; i < paths.size(); i++)
-                paths.set(i, paths.get(i).replace("./", ""));
+                paths.set(i, paths.get(i).replace(args[0] + "/", ""));
 
             ArrayList<String> asmFiles = new ArrayList<String>();
             ArrayList<String> objFiles = new ArrayList<String>();
@@ -166,7 +166,7 @@ public class RegenMakeFile {
             for(int i = 0; i < pngFiles.size(); i++){
                 lineBuffer = tbppFiles.get(i) + " " + palFiles.get(i) + ": " + pngFiles.get(i);
                 newLines.add(lineBuffer);
-                lineBuffer = "\t" + "java ../tools/graphics/PngToBin.java " + pngFiles.get(i) + " " + tbppFiles.get(i) + " " + palFiles.get(i);
+                lineBuffer = "\t" + "java -cp ../tools/graphics PngToBin " + pngFiles.get(i) + " " + tbppFiles.get(i) + " " + palFiles.get(i);
                 newLines.add(lineBuffer);
                 newLines.add("");
             }

@@ -1,8 +1,9 @@
 EMULICIOUS = /Users/mattsun/GameBoy/Emulicious/Emulicious.jar
-
-RGBASMFLAGS = -L
+RGBASMFLAGS = -l -Weverything
 RGBLINKFLAGS =
 RGBFIXFLAGS = -v -C -p 0xFF
+
+CURRENT_DIR = $(shell pwd)
 
 MAIN = tetris
 
@@ -12,6 +13,7 @@ kill:
 	pkill java
 
 start: ../build/$(MAIN).gb
+	code ..
 	java -jar $(EMULICIOUS) ../build/$(MAIN).gb &
 
 cleanCode:
@@ -28,20 +30,24 @@ clean:
 
 forceCode:
 	make cleanCode
-	make
+	make -j
 
 forceGraphics:
 	make cleanGraphics
-	make
+	make -j
 
 
 force:
 	make regen
-	make forceCode
-	make forceGraphics
+	make cleanGraphics
+	make cleanCode
+	make -j
+
+fast:
+	make -j
 
 regen:
-	java ../tools/make/RegenMakeFile.java
+	java -cp ../tools/make RegenMakeFile $(CURRENT_DIR)
 
 
 
@@ -79,7 +85,7 @@ regen:
 ../tmp/math.o: lib/math.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
-../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
+../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
 	rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetrominos.o: src/tetrominos.asm
@@ -93,32 +99,32 @@ regen:
 
 
 graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal: graphics/raw/BG-2.png
-	java ../tools/graphics/PngToBin.java graphics/raw/BG-2.png graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/BG-2.png graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal
 
 graphics/bin/BG-3.2bpp graphics/bin/BG-3.pal: graphics/raw/BG-3.png
-	java ../tools/graphics/PngToBin.java graphics/raw/BG-3.png graphics/bin/BG-3.2bpp graphics/bin/BG-3.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/BG-3.png graphics/bin/BG-3.2bpp graphics/bin/BG-3.pal
 
 graphics/bin/BG-1.2bpp graphics/bin/BG-1.pal: graphics/raw/BG-1.png
-	java ../tools/graphics/PngToBin.java graphics/raw/BG-1.png graphics/bin/BG-1.2bpp graphics/bin/BG-1.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/BG-1.png graphics/bin/BG-1.2bpp graphics/bin/BG-1.pal
 
 graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal: graphics/raw/Tetris.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris.png graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris.png graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal
 
 graphics/bin/Tetris-p2.2bpp graphics/bin/Tetris-p2.pal: graphics/raw/Tetris-p2.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p2.png graphics/bin/Tetris-p2.2bpp graphics/bin/Tetris-p2.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p2.png graphics/bin/Tetris-p2.2bpp graphics/bin/Tetris-p2.pal
 
 graphics/bin/Tetris-p3.2bpp graphics/bin/Tetris-p3.pal: graphics/raw/Tetris-p3.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p3.png graphics/bin/Tetris-p3.2bpp graphics/bin/Tetris-p3.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p3.png graphics/bin/Tetris-p3.2bpp graphics/bin/Tetris-p3.pal
 
 graphics/bin/Tetris-p1.2bpp graphics/bin/Tetris-p1.pal: graphics/raw/Tetris-p1.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p1.png graphics/bin/Tetris-p1.2bpp graphics/bin/Tetris-p1.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p1.png graphics/bin/Tetris-p1.2bpp graphics/bin/Tetris-p1.pal
 
 graphics/bin/Tetris-p4.2bpp graphics/bin/Tetris-p4.pal: graphics/raw/Tetris-p4.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p4.png graphics/bin/Tetris-p4.2bpp graphics/bin/Tetris-p4.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p4.png graphics/bin/Tetris-p4.2bpp graphics/bin/Tetris-p4.pal
 
 graphics/bin/Tetris-p5.2bpp graphics/bin/Tetris-p5.pal: graphics/raw/Tetris-p5.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p5.png graphics/bin/Tetris-p5.2bpp graphics/bin/Tetris-p5.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p5.png graphics/bin/Tetris-p5.2bpp graphics/bin/Tetris-p5.pal
 
 graphics/bin/Tetris-p6.2bpp graphics/bin/Tetris-p6.pal: graphics/raw/Tetris-p6.png
-	java ../tools/graphics/PngToBin.java graphics/raw/Tetris-p6.png graphics/bin/Tetris-p6.2bpp graphics/bin/Tetris-p6.pal
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p6.png graphics/bin/Tetris-p6.2bpp graphics/bin/Tetris-p6.pal
 
