@@ -33,28 +33,28 @@ To build an project, the project is preferable isolated in the `/Active/` direct
 
 To build a project with the standard structure, navigate to `Active/ProjectName/assets/`, then run these commands
 
-> `make regen` 
+`make regen` 
 
 *to build generate the make file (run this command whenever a new file is added)*
 
-> `make` 
+`make` 
 
 *to build the project*
 
 **Other Commands**
-> `make start` 
+`make start` 
 
 *to open VSCode as well as Emulicious with the app, configure the path of Emulicous at the start of the Makefile*
 
-> `make clean` 
+`make clean` 
 
 *remove all temporary files*
 
-> `make force` 
+`make force` 
 
 *recompile everything*
 
-> `make fast` 
+`make fast` 
 
 *run make in parallel*
 
