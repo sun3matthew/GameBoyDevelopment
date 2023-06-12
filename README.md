@@ -42,6 +42,7 @@ To build a project with the standard structure, navigate to `Active/ProjectName/
 *to build the project*
 
 **Other Commands**
+
 `make start` 
 
 *to open VSCode as well as Emulicious with the app, configure the path of Emulicous at the start of the Makefile*
