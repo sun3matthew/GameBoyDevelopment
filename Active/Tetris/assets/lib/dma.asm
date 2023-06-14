@@ -13,7 +13,7 @@ SECTION "Shadow SCN_B1", WRAM0
     wShadowSCN_B1::
         ds SSCRNS
 
-SECTION "Init DMA", ROM0
+SECTION "DMA", ROM0
 ; Init OAM Transfer HRAM and shadow DMA from current VRAM and OAM
 InitDMA::
 	call CopyDMARoutine
@@ -43,7 +43,6 @@ InitDMA::
 		call MemcopyLen
 	ret
 
-SECTION "Start DMA Transfers", ROM0
 ; Start the DMA transfers to the VRAM and OAM
 DMATransfer::
 	
@@ -72,7 +71,6 @@ DMATransfer::
 	ret
 
 
-SECTION "VRAM DMA routine", ROM0
 ; Start a VRAM DMA transfer.
 ; @param de: Source
 ; @param hl: Destination
@@ -94,7 +92,6 @@ VRAMDMA:
 	ld [rHDMA5], a
 	ret
 
-SECTION "OAM DMA routine", ROM0
 ; Init the DMA routine in HRAM
 CopyDMARoutine:
 	ld  hl, DMARoutine

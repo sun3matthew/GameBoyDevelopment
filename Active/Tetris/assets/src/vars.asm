@@ -8,3 +8,4 @@ SECTION "Counter", WRAM0
 	wFrameCounter:: db
     wRowCounter:: db
     wColorCounter:: db
+    wMemCounter:: db

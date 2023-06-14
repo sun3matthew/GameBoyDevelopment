@@ -1,5 +1,6 @@
 INCLUDE "inc/hardware.inc"
 INCLUDE "inc/dma.inc"
+INCLUDE "inc/dmem.inc"
 
 INCLUDE "inc/tetris.inc"
 
@@ -27,8 +28,11 @@ EntryPoint: ;*
 		
 	;* screen must be off to access OAM and VRAM
 
-	; init rng
+	; init RNG
 	call InitRNG
+
+	; init DMEM
+	call DMEM_clean
 	
 	; clean up the OAM
 	ld d, 0
@@ -116,6 +120,8 @@ EntryPoint: ;*
 	ld [wFrameCounter], a
 	ld [wRowCounter], a
 	ld [wColorCounter], a
+	ld a, $21
+	ld [wMemCounter], a
 
 ; Init DMA
 	call InitDMA
@@ -132,6 +138,31 @@ Main:
 	ld a, [wFrameCounter]
 	cp 0
 	jp nz, .skipDrawRow
+
+	ld a, 1
+	ld [rSVBK], a
+	ld de, $0040
+	call malloc
+
+	ld a, h
+	cp 0
+	jp nz, .tryFreeEnd
+
+	ld hl, DMEM_START
+	call free
+
+	jp .skipDrawRow
+
+	.tryFreeEnd
+
+
+	ld a, [wMemCounter]
+	inc a
+	ld [wMemCounter], a
+
+	ld d, a
+	ld bc, $0040
+	call MemSet
 
 
 	ld a, [wRowCounter]
@@ -157,6 +188,7 @@ Main:
 	call DrawRow
 
 	.skipDrawRow
+
 
 
 	call WaitVBlank
@@ -202,7 +234,7 @@ Main:
 
 	ld a, [wFrameCounter]
 	inc a
-	cp 4
+	cp 60
 	jp nz, .resetFrameEnd
 		ld a, 0
 	.resetFrameEnd:
