@@ -53,9 +53,10 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
+../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
+		../tmp/dmem.o \
 		../tmp/utils.o \
 		../tmp/input.o \
 		../tmp/dma.o \
@@ -69,6 +70,9 @@ regen:
 
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/mem.o lib/mem.asm
+
+../tmp/dmem.o: lib/dmem.asm inc/dmem.inc inc/hardware.inc
+	rgbasm $(RGBASMFLAGS) -o ../tmp/dmem.o lib/dmem.asm
 
 ../tmp/utils.o: lib/utils.asm inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/utils.o lib/utils.asm
