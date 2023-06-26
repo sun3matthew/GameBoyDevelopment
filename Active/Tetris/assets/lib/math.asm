@@ -4,6 +4,7 @@ SECTION "MATH", ROM0
 ; @cycles 8
 ; @param bc: Register to subtract from
 ; @param de: Register to subtract
+; @return bc: Register with result
 ; @destroy a
 SUBr16r16::
     ld a, c ; 1 cycle
@@ -19,6 +20,7 @@ SUBr16r16::
 ; @cycles 8
 ; @param bc: Register to add from
 ; @param de: Register to add
+; @return bc: Register with result
 ; @destroy a
 ADDr16r16::
     ld a, c ; 1 cycle
@@ -34,7 +36,8 @@ ADDr16r16::
 ; @cycles f~ ton
 ; @param bc: register to multiply from
 ; @param de: register to multiply
-; @destroy hl, a
+; @return bc: register with result
+; @destroy a, hl
 MULr16R16::
     ld h, b
     ld l, c
@@ -62,6 +65,7 @@ MULr16R16::
 ; @cycles f~ ton
 ; @param b: Register to multiply from
 ; @param c: Register to multiply
+; @return b: Register with result
 ; @destroy a
 MULr8r8::
     ld a, c 
@@ -83,6 +87,7 @@ MULr8r8::
 ; @cycles f~ ton
 ; @param b: Register to divide from
 ; @param c: Register to divide
+; @return b: Register with result
 ; @destroy a
 DIVr8r8::
     ld a, c 
@@ -107,7 +112,8 @@ DIVr8r8::
 ; @cycles f~ ton
 ; @param bc: register to divide from
 ; @param de: register to divide
-; @destroy hl, a
+; @return bc: register with result
+; @destroy a, hl
 DIVr16R16::
     ld a, d
     or a, e
@@ -140,3 +146,5 @@ DIVr16R16::
 ; @param b: Register to modulo from
 ; @param c: Register to modulo
 ; @destroy a
+MODr8r8::
+    ret 

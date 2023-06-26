@@ -12,9 +12,10 @@ default: ../build/$(MAIN).gb
 kill:
 	pkill java
 
-start: ../build/$(MAIN).gb
+start:
 	code ..
 	java -jar $(EMULICIOUS) ../build/$(MAIN).gb &
+
 
 cleanCode:
 	find .. -name "*.o" -type f -delete
@@ -95,7 +96,7 @@ regen:
 ../tmp/tetrominos.o: src/tetrominos.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
 
-../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/dma.inc inc/hardware.inc
+../tmp/tetris.o: src/tetris.asm inc/dmem.inc inc/tetris.inc inc/dma.inc inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
 ../tmp/vars.o: src/vars.asm inc/tetris.inc
