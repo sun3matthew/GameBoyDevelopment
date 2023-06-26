@@ -12,9 +12,10 @@ default: ../build/$(MAIN).gb
 kill:
 	pkill java
 
-start: ../build/$(MAIN).gb
-	code .
+start:
+	code ..
 	java -jar $(EMULICIOUS) ../build/$(MAIN).gb &
+
 
 cleanCode:
 	find .. -name "*.o" -type f -delete

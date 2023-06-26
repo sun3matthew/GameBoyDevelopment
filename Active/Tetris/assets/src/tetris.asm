@@ -32,7 +32,7 @@ EntryPoint: ;*
 	call InitRNG
 
 	; init DMEM
-	call DMEM_clean
+	call DMEM_reset
 	
 	; clean up the OAM
 	ld d, 0
