@@ -30,6 +30,7 @@ SECTION "DMEM", ROM0
 ;   1 byte for num entires of memory adresses 
 ;   1 byte for num entries of memory gaps
 ;   2 bytes for end of memory
+;   2 bytes for temp data
 ; 0xD011 - HEADER_1: memory addresses
 ;   for each memory allocation
 ;       2 bytes for memory address
@@ -74,6 +75,111 @@ DMEM_reset_bank::
     ld a, LOW(DMEM_START) 
     ld [hli], a
 
+    ld a, 0
+    ld [hli], a
+    ld [hli], a
+
+
+
+    ret
+
+; allocate memory fast (does not fill fragmented memory) in wram bank, make sure to set bank to the correct bank, end of memory
+; @param de: size
+; @return hl: address
+; @destroy a, de, bc
+mallocFast::
+    ; check if there is enough space for metadata
+        ; load length into a
+        ld a, [DMEM_HEADER_0_NUMADDRESS]
+
+        ; check if there is enough space for metadata
+        ; if a == MAX_NUM
+        cp DMEM_HEADER_1_ENTRIES
+        jp nz, .hasSpaceMeta
+
+        ;! not enough space for meta, return 0
+            ld h, 0
+            ld l, 0
+            ret
+        .hasSpaceMeta
+
+    ; no gaps, see if there is enough space at the end of memory
+    ld hl, DMEM_HEADER_0_ENDOFMEM
+    ld a, [hli]
+    ld b, a
+    ld a, [hl]
+    ld c, a
+
+    ; bc = end of memory
+    push bc 
+
+    ; add de to bc
+    ld a, c
+    add e
+    ld c, a
+    ld a, b
+    adc d
+    ld b, a
+    
+    ld hl, DMEM_END
+    ; bc = new end of memory
+    ; see if there is enough space
+    ; only need to check high byte since no number can be bigger than 0xFF
+    ; bc < hl
+    ld a, h
+    cp b
+
+    jp nc, .hasSpace
+    
+    ;! not enough space, return 0
+        pop bc
+        ld h, 0
+        ld l, 0
+        ret
+
+    .hasSpace
+
+    ; increment number of memory addresses
+    ld hl, DMEM_HEADER_0_NUMADDRESS
+    ld a, [hl]
+    inc a
+    ld [hli], a
+
+    ; skip num gaps
+    inc hl
+
+    ; load new end of memory into header
+    ld [hl], b
+    inc hl
+    ld [hl], c        
+
+
+    ; add new entry of the start address to the memory address header
+    ld hl, DMEM_HEADER_1
+
+    ; multiply a by 2
+    dec a
+    sla a
+    
+    ; add a to hl
+    add l
+    ld l, a
+
+    ld a, h
+    adc 0
+    ld h, a
+
+    pop bc
+
+    ; store address
+    ld [hl], b
+    inc hl
+    ld [hl], c
+
+    ; return address
+    ld h, b
+    ld l, c
+
     ret
 
     
@@ -82,6 +188,11 @@ DMEM_reset_bank::
 ; @return hl: address
 ; @destroy a, de, bc
 malloc::
+    ld hl, DMEM_HEADER_0_LASTALLOCS
+    ld [hl], d
+    inc hl
+    ld [hl], e
+
     ; check if there is enough space for metadata
         ; load length into a
         ld a, [DMEM_HEADER_0_NUMADDRESS]
@@ -116,6 +227,8 @@ malloc::
         adc 0
         ld h, a
 
+        dec hl
+
         ; load length into b
         ld a, [DMEM_HEADER_0_NUMGAPS]
         ld b, a
@@ -132,12 +245,12 @@ malloc::
             ld a, [hli]
             cp d
             jp c, .continue
+            jp nz, .hasGap
 
             ld a, [hl]
             cp e
             jp c, .continue
 
-            dec hl
             jp .hasGap
 
             
@@ -165,13 +278,12 @@ malloc::
         push bc 
 
         ; add de to bc
-        ld a, b
-        add d
-        ld b, a
-
         ld a, c
-        adc e
+        add e
         ld c, a
+        ld a, b
+        adc d
+        ld b, a
         
         ld hl, DMEM_END
         ; bc = new end of memory
@@ -193,6 +305,7 @@ malloc::
 
         ; increment number of memory addresses
         ld hl, DMEM_HEADER_0_NUMADDRESS
+        ld a, [hl]
         inc a
         ld [hli], a
 
@@ -234,10 +347,13 @@ malloc::
         ret
 
     .hasGap
+        dec hl
+        dec b
         ; b = index of gap entry
 
         ; hl = start of gap entry, entry two, gap size
         ; store address into de
+
         dec hl
         ld e, [hl]
         dec hl
@@ -248,12 +364,17 @@ malloc::
         push de
         push bc
 
-        ; hl = start of gap entry, entry two, gap size
         ld b, [hl]
         inc hl
         ld c, [hl]
         dec hl
 
+        push hl
+        ld hl, DMEM_HEADER_0_LASTALLOCS
+        ld d, [hl]
+        inc hl
+        ld e, [hl]
+        pop hl
 
         ; check if fully filled, bc == de
         ld a, c
@@ -263,6 +384,8 @@ malloc::
         ld a, b
         cp d
         jp nz, .notFull
+
+
 
         ; modify gap header
             ; remove gap entry
@@ -286,8 +409,12 @@ malloc::
                 ld b, 0
                 ld c, a
 
-
                 call MemcopyLen
+
+                ; decrement number of gaps
+                ld hl, DMEM_HEADER_0_NUMGAPS
+                dec [hl]
+
                 jp .fullE
 
             ; store new gap address
@@ -314,9 +441,10 @@ malloc::
                 ld b, [hl]
 
                 ; calculate & store new gap address, [hl] = bc + de
+                inc hl
                 ld a, c
                 add e
-                ld [hli], a
+                ld [hld], a
 
                 ld a, b
                 adc d
@@ -325,29 +453,43 @@ malloc::
                 pop bc ; clear stack
 
         .fullE
+            ; de = address
             pop de
             push de
 
-            ; de = address
             ld hl, DMEM_HEADER_1
-            ld b, 0
+
+            ld a, [DMEM_HEADER_0_NUMADDRESS]
+            cp 0
+            jp z, .emptyAddressList
+
+            ld c, a
 
             ; itterate through addresses
             .loopAddresses
-                ; see if de > [hl]
+                ; see if de < [hl]
                 ld a, [hli]
                 cp d
-                jp c, .foundAddress
+                jp c, .loopAddressesC
+                jp nz, .foundAddress
 
-                ld a, [hli]
+                ld a, [hl]
                 cp e
-                jp c, .foundAddress
+                jp nc, .foundAddress
 
-                inc b
-                jp .loopAddresses
+                .loopAddressesC
+                inc hl
+                dec c
+                jp nz, .loopAddresses
             .loopAddressesE
 
+        inc hl
+        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        sub c
+        ld b, a
+
         .foundAddress
+            dec hl
             ; hl = address entry
             ; b = index of address entry
 
@@ -358,26 +500,39 @@ malloc::
             ld b, 0
             ld c, a
 
+            ; check if bc == 0
+            ld a, b
+            or c
+            jp z, .emptyAddressList
+
             ; setup hl 
             add l
             ld l, a
             ld a, h
             adc 0
             ld h, a
+            dec hl
 
             ; setup de
             ld d, h
             ld e, l
 
+            ; setup hl
+            inc hl
+            inc hl
+
             ; copy memory
             call MemcopyLenR
-
-
-            ; insert address
+            
             ld h, d
             ld l, e
-            pop de
 
+            inc hl
+
+            .emptyAddressList
+
+            pop de
+            ; insert address
             ld [hl], d
             inc hl
             ld [hl], e
@@ -409,6 +564,8 @@ free::
     ; this is the hard part..
 
     ; find the address in the memory address header
+        ld d, h
+        ld e, l
 
         ; load gap header start into hl
         ld hl, DMEM_HEADER_1
@@ -416,6 +573,7 @@ free::
         ld b, 0
 
         ; itterate through addresses
+        ; TODO make this not a infinite loop, return error values
         .loopAddresses
             ; see if de == [hl]
             ld a, [hli]
@@ -440,17 +598,18 @@ free::
     .foundAddress
     push hl
     push bc
+    push de
     ; remove entry
         ; hl = address entry
         ; b = index of address entry
 
+        ; setup hl
+
         ; setup de
         ld d, h
         ld e, l
-
-        ; setup hl
-        inc hl
-        inc hl
+        inc de
+        inc de
 
         ; setup bc
         ld a, [DMEM_HEADER_0_NUMADDRESS]
@@ -465,18 +624,16 @@ free::
         dec [hl]
 
 
-    pop hl
+    pop de
     pop bc
+    pop hl
 
     ; hl = address entry
     ; b = index of address entry
     ; calculate gap size
-        ld d, [hl]
-        inc hl
-        ld e, [hl]
 
         ; check if is last entry
-        ld a, [DMEM_HEADER_0_NUMGAPS]
+        ld a, [DMEM_HEADER_0_NUMADDRESS]
         cp b
         jp nz, .notLast
 
@@ -488,7 +645,6 @@ free::
             jp .LastE
 
         .notLast
-            inc hl
             ld b, [hl]
             inc hl
             ld c, [hl]
@@ -502,7 +658,7 @@ free::
         sbc d
         ld b, a
 
-        ; bc = gap size
+        ; bc = gap size + free size
         ; de = address of gap
     
     ; store gap size
@@ -514,7 +670,7 @@ free::
         ; if none, insert.
 
 
-        ; bc = gap size
+        ; bc = gap size + free size
         ; de = address of gap
 
         push bc
@@ -526,29 +682,113 @@ free::
 
         ; itterate through addresses
         cp 0
+        jp nz, .loopGaps
+        ;empty gap list
+            ; store new start adress, [hl] = de
+            ld [hl], d
+            inc hl
+            ld [hl], e
+            inc hl
+
+            ; store new end of gap, [hl] = bc
+            pop bc
+            ld [hl], b
+            inc hl
+            ld [hl], c
+
+            ld hl, DMEM_HEADER_0_NUMGAPS
+            inc [hl]
+
+            ret
+
         .loopGaps
-            jp z, .foundGap
-            ; see if de > [hl]
+            ; see if de < [hl]
             ld a, [hli]
             cp d
-            jp c, .foundGap
+            jp c, .loopGapsC 
+            jp nz, .foundGap
 
             ld a, [hl]
             cp e
-            jp c, .foundGap
+            jp nc, .foundGap
 
+            .loopGapsC
             inc hl
             inc hl
             inc hl
 
             dec b
-            jp .loopGaps
+            jp nz, .loopGaps
+
+        jp .checkFront
 
         .foundGap
+
+
+        ld a, b
+        ld [DMEM_HEADER_0_LASTALLOCS], a
+
+        ; calculate new gap size, bc -= free gap size
+
+        ; only when there is a gap that is included
+        ; if de + bc > [hl]
+        pop bc
+        push bc
+
+        ld a, c
+        add e
+        ld c, a
+        ld a, b
+        adc d
+        ld b, a
+
         dec hl
-        ; hl = gap entry
+        ld a, b
+        cp [hl]
+        inc hl
+        jp c, .calculateE
+        jp nz, .calculate
+
+        ld a, c
+        cp [hl]
+        jp c, .calculateE
+        
+
+        .calculate
+            inc hl
+            inc hl
+            pop bc
+            ld a, c
+            sub [hl]
+            dec hl
+            ld c, a
+            ld a, b
+            sbc [hl]
+            ld b, a
+            push bc
+            dec hl
+        .calculateE
+        dec hl
+
+        ; check if it has a front
+        ld a, [DMEM_HEADER_0_LASTALLOCS]
+        ld b, a
+        inc b
+        ld a, [DMEM_HEADER_0_NUMGAPS]
+        cp b
+        jp z, .checkFront
+        dec hl
+        dec hl
+        jp .checkBack
+
+        ; hl = gap entry of front
 
             .checkFront
+                dec hl
+                dec hl
+                dec hl
+                dec hl
+
                 ; set bc to the memory address
                 ld b, [hl]
                 inc hl
@@ -557,13 +797,13 @@ free::
 
                 ; set bc += [hl], [hl] = gap size
                 ld a, c
+                inc hl
                 add [hl]
                 ld c, a
-                inc hl
                 ld a, b
+                dec hl
                 adc [hl]
                 ld b, a
-                dec hl
 
                 ; check if bc == de
                 ld a, b
@@ -610,13 +850,11 @@ free::
                     ; check if hl == bc
                     ld a, b
                     cp h
-                    jp nz, .isLastEntry
+                    jp nz, .isLastEntryE
 
                     ld a, c
                     cp l
-                    jp nz, .isLastEntry
-
-                    jp .isLastEntryE
+                    jp nz, .isLastEntryE
 
                     .isLastEntry
                         pop bc ; clear stack
@@ -643,19 +881,32 @@ free::
                     jp nz, .cantMergeBackWF
 
                     ; merge
+                        ; store new gap size, bc
+                        inc hl
+                        inc hl
+
+                        ld c , [hl]
                         dec hl
-                        dec hl
+                        ld b , [hl]
                         dec hl
 
+                        dec hl
+                        dec hl
+                        ;dec hl
+
                         ; store new gap size, [hl] += bc
+                        ;inc hl
                         ld a, [hl]
-                        add b
+                        add c
                         ld [hl], a
-                        inc hl
+                        dec hl
                         ld a, [hl]
-                        adc c
+                        adc b
                         ld [hl], a
+                        
                         inc hl
+                        inc hl
+
 
                         ; shift everything forward
                         ; setup bc
@@ -678,15 +929,15 @@ free::
                             sbc h
                             ld b, a
 
+                        ; setup hl
+
                         ; setup de
                         ld d, h
                         ld e, l
-
-                        ; setup hl
-                        inc hl
-                        inc hl
-                        inc hl
-                        inc hl
+                        inc de
+                        inc de
+                        inc de
+                        inc de
 
                         call MemcopyLen
 
@@ -703,27 +954,6 @@ free::
                 inc hl
                 inc hl
 
-                ; check if is last entry
-                    ; set bc to the end of memory
-                    ld bc, DMEM_HEADER_2
-                    ld a, [DMEM_HEADER_0_NUMGAPS]
-                    sla a
-                    sla a
-                    add c
-                    ld c, a
-                    ld a, b
-                    adc 0
-                    ld b, a
-
-                    ; check if hl == bc
-                    ld a, b
-                    cp h
-                    jp nz, .insertEntry
-
-                    ld a, c
-                    cp l
-                    jp nz, .insertEntry
-
                 ; calculate end of gap, bc += de
                 pop bc
                 push bc
@@ -737,21 +967,19 @@ free::
 
                 ; see if bc == [hl]
                 ld a, [hl]
-                cp c
+                cp b
                 jp nz, .insertEntry
                 
-                inc hl
-                ld a, [hl]
-                cp b
+                inc hl 
+                ld a, [hld]
+                cp c
                 jp nz, .insertEntry
 
                 ; merge
-                    dec hl
-                    
                     ; store new start adress, [hl] = de
-                    ld [hl], e
-                    inc hl
                     ld [hl], d
+                    inc hl
+                    ld [hl], e
                     inc hl
 
                     ; store new end of gap, [hl] += bc
@@ -775,7 +1003,7 @@ free::
                 ld a, [DMEM_HEADER_0_NUMGAPS]
 
                 cp DMEM_HEADER_2_ENTRIES
-                jp nz, .isLastEntry ;! bad code
+                jp z, .isLastEntry ;! bad code
 
                 push de
 
@@ -801,6 +1029,11 @@ free::
                     sbc h
                     ld b, a
 
+                    ; check if bc == 0
+                    ld a, b
+                    or c
+                    jp z, .insertAtEnd
+
                 ; setup hl, hl += bc
                 ld a, l
                 add c
@@ -808,12 +1041,15 @@ free::
                 ld a, h
                 adc b
                 ld h, a
+                dec hl
 
                 ; setup de
                 ld d, h
                 ld e, l
 
                 ; setup hl
+                inc hl
+                inc hl
                 inc hl
                 inc hl
 
@@ -823,10 +1059,13 @@ free::
                 ; insert new entry
                 ld h, d
                 ld l, e
+                inc hl
+
+                .insertAtEnd
 
                 pop de
                 pop bc
-
+                
                 ; store new start adress, [hl] = de
                 ld [hl], d
                 inc hl
@@ -834,13 +1073,12 @@ free::
                 inc hl
 
                 ; store new end of gap, [hl] = bc
-                ld [hl], c
-                inc hl
                 ld [hl], b
+                inc hl
+                ld [hl], c
 
                 ; increment number of gaps
                 ld hl, DMEM_HEADER_0_NUMGAPS
                 inc [hl]
 
                 ret
-    

@@ -55,7 +55,7 @@ regen:
 #AUTO-GENERATED
 
 ../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
-	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
+	rgblink -n ../build/$(MAIN).sym -M -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/dmem.o \
 		../tmp/utils.o \

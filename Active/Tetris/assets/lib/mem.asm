@@ -47,7 +47,7 @@ MemcopyLenR::
     ld a, b
     or a, c
 
-    jp nz, MemcopyLen
+    jp nz, MemcopyLenR
     ret
 
 ; Copy bytes from one area to another.

@@ -142,14 +142,131 @@ Main:
 	ld a, 1
 	ld [rSVBK], a
 	ld de, $0040
+	call mallocFast
+
+	push hl
+
+	ld a, [wMemCounter]
+	inc a
+	ld [wMemCounter], a
+	ld bc, $0040
+	call MemSet
+
+
+	ld de, $0040
+	call mallocFast
+	ld de, $0040
+	call mallocFast
+	ld de, $0040
+	call mallocFast
+
+	pop hl
+	call free
+
+	ld de, $0040
+	call mallocFast
+	call free
+
+	ld hl, $D190
+	call free
+
+	ld hl, $D150
+	call free
+
+	ld hl, $D110
+	call free
+
+	ld de, $0040
 	call malloc
+	push hl
+	ld d, 1
+	ld bc, $0040
+	call MemSet
+
+	ld de, $0020
+	call malloc
+	push hl
+	ld d, 2
+	ld bc, $0020
+	call MemSet
+
+	ld de, $0010
+	call malloc
+	push hl
+	ld d, 3
+	ld bc, $0010
+	call MemSet
+
+	ld de, $0100
+	call malloc
+	push hl
+	ld d, 4
+	ld bc, $0100
+	call MemSet
+
+	ld de, $0030
+	call malloc
+	push hl
+	ld d, 5
+	ld bc, $0030
+	call MemSet
+
+	ld de, $00A0
+	call malloc
+	push hl
+	ld d, 6
+	ld bc, $00A0
+	call MemSet
+
+	ld de, $0110
+	call malloc
+	push hl
+	ld d, 7
+	ld bc, $0110
+	call MemSet
+
+	pop hl
+	call free
+	pop hl
+	call free
+	pop hl
+	call free
+	pop hl
+	call free
+
+	ld de, $0030
+	call malloc
+	push hl
+	ld d, $FF
+	ld bc, $0030
+	call MemSet
+
+	pop hl
+	call free
+	pop hl
+	call free
+	pop hl
+	call free
+
+	ld de, $0110
+	call malloc
+	push hl
+	ld d, $FF
+	ld bc, $0110
+	call MemSet
+
+
+
+
+
+
 
 	ld a, h
 	cp 0
 	jp nz, .tryFreeEnd
 
 	ld hl, DMEM_START
-	call free
+	; call free
 
 	jp .skipDrawRow
 
@@ -162,7 +279,7 @@ Main:
 
 	ld d, a
 	ld bc, $0040
-	call MemSet
+	; call MemSet
 
 
 	ld a, [wRowCounter]

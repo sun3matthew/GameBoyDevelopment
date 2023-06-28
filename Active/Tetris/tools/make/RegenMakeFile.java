@@ -105,7 +105,7 @@ public class RegenMakeFile {
 
             newLines.add(lineBuffer);
 
-            lineBuffer = "\trgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \\";
+            lineBuffer = "\trgblink -n ../build/$(MAIN).sym -M -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \\";
             newLines.add(lineBuffer);
 
             for(int i = 0; i < objFiles.size(); i++){
