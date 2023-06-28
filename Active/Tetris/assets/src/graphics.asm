@@ -22,7 +22,6 @@ Palette::
 	INCBIN "graphics/bin/Tetris-p4.pal"	
 	INCBIN "graphics/bin/Tetris-p5.pal"	
 	INCBIN "graphics/bin/Tetris-p6.pal"	
-	; INCBIN "graphics/bin/font.pal"	
 PaletteEnd::
 
 SECTION "TileMaps", ROM0
