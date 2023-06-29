@@ -8,29 +8,29 @@ DEF PIECE_S EQU 4
 DEF PIECE_Z EQU 5
 DEF PIECE_T EQU 6
 */
-SECTION "Pieces", ROM0
+SECTION "Pieces", ROM0, ALIGN[4]
 Pieces::
     ; PIECE_I
         ; R0
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
+            db 0, 0, 0, 0
+            db 0, 0, 0, 0
+            db 1, 1, 1, 1
+            db 0, 0, 0, 0
         ; R1
-            db 0, 0, 0, 0
-            db 0, 0, 0, 0
-            db 1, 1, 1, 1
-            db 0, 0, 0, 0
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
         ; R2
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
-            db 0, 0, 1, 0
-        ; R3
             db 0, 0, 0, 0
             db 0, 0, 0, 0
             db 1, 1, 1, 1
             db 0, 0, 0, 0
+        ; R3
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
+            db 0, 0, 1, 0
     
     ; PIECE_J
         ; R0
@@ -163,8 +163,4 @@ Pieces::
             db 0, 1, 1, 0
             db 0, 0, 1, 0
             db 0, 0, 0, 0
-    
-    
-
-
 PiecesEnd::

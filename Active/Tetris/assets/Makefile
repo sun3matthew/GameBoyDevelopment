@@ -1,6 +1,6 @@
 EMULICIOUS = /Users/mattsun/GameBoy/Emulicious/Emulicious.jar
 RGBASMFLAGS = -l -Weverything
-RGBLINKFLAGS =
+RGBLINKFLAGS = -t
 RGBFIXFLAGS = -v -C -p 0xFF
 
 CURRENT_DIR = $(shell pwd)
