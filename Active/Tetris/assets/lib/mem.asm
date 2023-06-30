@@ -57,8 +57,13 @@ MemcopyLenR::
 ; @return: hl: end
 ; @destroy: a, bc, de, hl
 Memcopy::
-    ;TODO, why tf you doint a call, just sub it.
-    call SUBr16r16
+    ld a, c
+    sub e
+    ld c, a
+    ld a, b
+    sub d
+    ld b, a
+    
     call MemcopyLen
     ret
 

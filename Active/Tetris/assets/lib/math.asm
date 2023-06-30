@@ -1,37 +1,5 @@
 SECTION "MATH", ROM0
 
-; SUBTRACT 16-bit register from 16-bit register
-; @cycles 8
-; @param bc: Register to subtract from
-; @param de: Register to subtract
-; @return bc: Register with result
-; @destroy a
-SUBr16r16::
-    ld a, c ; 1 cycle
-    sub e ; 1 cycle
-    ld c, a ; 1 cycle
-
-    ld a, b ; 1 cycle
-    sbc a, d ; 1 cycle
-    ld b, a ; 1 cycle
-    ret
-
-; ADD 16-bit register from 16-bit register
-; @cycles 8
-; @param bc: Register to add from
-; @param de: Register to add
-; @return bc: Register with result
-; @destroy a
-ADDr16r16::
-    ld a, c ; 1 cycle
-    add e ; 1 cycle
-    ld c, a ; 1 cycle
-
-    ld a, b ; 1 cycle
-    adc a, d ; 1 cycle
-    ld b, a ; 1 cycle
-    ret
-
 ; MULTIPLY 16-bit register with 16-bit register (do booths algorithm later)
 ; @cycles f~ ton
 ; @param bc: register to multiply from

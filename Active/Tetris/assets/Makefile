@@ -55,7 +55,7 @@ regen:
 #AUTO-GENERATED
 
 ../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
-	rgblink -n ../build/$(MAIN).sym -M -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
+	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/dmem.o \
 		../tmp/utils.o \
@@ -90,7 +90,7 @@ regen:
 ../tmp/math.o: lib/math.asm
 	rgbasm $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
-../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
+../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
 	rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetrominos.o: src/tetrominos.asm
@@ -117,6 +117,9 @@ graphics/bin/Tetris.2bpp graphics/bin/Tetris.pal: graphics/raw/Tetris.png
 
 graphics/bin/Tetris-p2.2bpp graphics/bin/Tetris-p2.pal: graphics/raw/Tetris-p2.png
 	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p2.png graphics/bin/Tetris-p2.2bpp graphics/bin/Tetris-p2.pal
+
+graphics/bin/Tetris-2.2bpp graphics/bin/Tetris-2.pal: graphics/raw/Tetris-2.png
+	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-2.png graphics/bin/Tetris-2.2bpp graphics/bin/Tetris-2.pal
 
 graphics/bin/Tetris-p3.2bpp graphics/bin/Tetris-p3.pal: graphics/raw/Tetris-p3.png
 	java -cp ../tools/graphics PngToBin graphics/raw/Tetris-p3.png graphics/bin/Tetris-p3.2bpp graphics/bin/Tetris-p3.pal

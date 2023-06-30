@@ -117,10 +117,14 @@ EntryPoint: ;*
 
 call InitPieceInfo
 
+
 ; Turn the LCD on
 	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
 	ld [rLCDC], a
 
+
+call GeneratePiece
+call DrawPieceOnBoard
 
 Main:
 	call WaitVBlank
@@ -128,19 +132,51 @@ Main:
 
 	ld a, [wFrameCounter]
 	inc a
-	cp 60
+	cp 10
 	jp nz, .resetFrameEnd
+	
+	ld a, [wCurrentPiece]
+	push af
+	ld a, 7
+	ld [wCurrentPiece], a
+	call DrawPieceOnBoard
+	pop af
+	ld [wCurrentPiece], a
 
-	call RandPeice
+	/*
+	ld a, [wCurrentRotation]
+	inc a
+	cp 4
+	jp nz, .keepRotation
+	ld a, 0
+	.keepRotation:
+	ld [wCurrentRotation], a
+	*/
+
+	ld a, [wCurrentY]
+	inc a
+	ld [wCurrentY], a
 
 
+	cp BOARD_HEIGHT - 3
+	jp z, .NewPiece
+	jp .OldPiece
+	.NewPiece:
+		call GeneratePiece
+		jp .PieceEnd
+	.OldPiece:
+		call LoadPieceLoc
+		call ShiftPieceLoc
+	.PieceEnd
+
+	call DrawPieceOnBoard
 
 	.resetFrameEnd:
 	ld [wFrameCounter], a
 
 	jp Main
 
-; Get a random peice
+; Get a random Piece
 ; @destroy hl
 ; @return a
 RandPiece:
@@ -151,48 +187,47 @@ RandPiece:
 	jp z, RandPiece
 	ret
 
+
 GeneratePiece:
 	call RandPiece
-	; a = random peice from 0 to 6
+	; a = random Piece from 0 to 6
 	ld hl, wCurrentPiece
 	ld [hl], a
 
 	ld hl, wCurrentRotation
 	ld [hl], 0
 
-	ld hl, wCurrentX
-	ld [hl], BOARD_WIDTH / 2 - 2
+	call LoadPieceLoc
 
-	ld hl, wCurrentY
-	call GetMaxYCoord
+	ld hl, wCurrentX
+	ld [hl], BOARD_TWIDTH / 2 - 1
+
+	call GetMinYCoord
 	xor a ; set a to 0
 	sub c ; subtract the max y coord
+	ld hl, wCurrentY
 	ld [hl], a
 
-	call UpdatePieceLoc
+	call ShiftPieceLoc
 	ret
 
-; get the y coord of the bottom of the current peice
+; get the y coord of the bottom of the current Piece
 ; @return c
-GetMaxYCoord:
-    ; wPeiceLoc:: ds 8; 2 bytes per peice
-	ld a, [wCurrentPeice]
-	ld b, a
-	ld a, [wCurrentRotation]
-	ld c, a
-
-	call GetPieceLocAddress
+GetMinYCoord:
+	ld hl, wPieceLoc
 
 	ld b, 4
-	ld c, 0
+	ld c, $FF
 	.loop
 		inc hl
 		ld a, [hli]
 
 		cp c
-		jp nc, .lessThen
-		ld c, a
-		.lessThen
+		jp nc, .skip
+
+			ld c, a
+
+		.skip:
 
 		dec b
 		jp nz, .loop
@@ -200,9 +235,9 @@ GetMaxYCoord:
 
 
 
-UpdatePieceLoc:
-    ; wPeiceLoc:: ds 8; 2 bytes per peice
-	ld a, [wCurrentPeice]
+LoadPieceLoc:
+    ; wPieceLoc:: ds 8; 2 bytes per Piece
+	ld a, [wCurrentPiece]
 	ld b, a
 	ld a, [wCurrentRotation]
 	ld c, a
@@ -212,33 +247,157 @@ UpdatePieceLoc:
 	ld d, h
 	ld e, l
 
-	ld hl, wPeiceLoc
+	ld hl, wPieceLoc
 
 	ld b, 0
 	ld c, 8
 
 	call MemcopyLen
 
-	ld b, 4
-	ld c, 0
-	.loop
-		inc hl
-		ld a, [hli]
+	ret
+	
+ShiftPieceLoc:
+	ld hl, wCurrentX
+	ld d, [hl]
 
-		cp c
-		jp nc, .lessThen
-		ld c, a
-		.lessThen
+	ld hl, wCurrentY
+	ld e, [hl]
+
+	ld hl, wPieceLoc
+	ld b, 4
+	.loop
+		ld a, [hl]
+		add d
+		ld [hli], a
+
+		ld a, [hl]
+		add e
+		ld [hli], a
 
 		dec b
 		jp nz, .loop
+	ret
 
+DrawPieceOnBoard:
+	ld hl, wPieceLoc
+	ld b, 4
+	.loop
+		ld a, [hli]
+		ld d, a
+		ld a, [hli]
+		ld e, a
+
+		; verify e < BOARD_HEIGHT + 2
+		cp BOARD_HEIGHT + 2
+		jp nc, .outOfBounds
+
+		push bc
+		push hl
+		call DrawTileOnBoard
+		pop hl
+		pop bc
+
+		.outOfBounds:
+
+		dec b
+		jp nz, .loop
+	ret	
+
+DrawTileOnBoard:
+	; de = xy
+	call GetScreenIdx
+
+
+	ld a, [wCurrentPiece]
+	call GetTileIdx
+	ld [hl], a
+
+	ld bc, SSCRNS
+	ld a, l
+	add c
+	ld l, a
+	ld a, h
+	adc b
+	ld h, a
+
+
+	ld a, [wCurrentPiece]
+	call GetTileColor
+	ld [hl], a
+	ret
+
+; @param a = tile idx
+GetTileIdx:
+	cp 7
+	jp z, .blank
+		and %00000001
+		add 3
+		ret
+	.blank:
+		ld a, 1
+		ret
+
+
+; @param a = tile attr
+GetTileColor:
+	cp 7
+	jp z, .blank
+		and %00000001
+		add 3
+		ret
+	.blank:
+		ld a, 1
+		ret
+
+
+; @param de = xy
+; @destroy a, bc
+; @return hl
+GetScreenIdx:
+	; de = xy
+
+	ld hl, wShadowSCN_B0
+	ld b, 0
+	ld c, e
+	; bc *= 32
+	sla c
+	rl b
+	sla c
+	rl b
+	sla c
+	rl b
+	sla c
+	rl b
+	sla c
+	rl b
+
+	; hl += bc
+	ld a, l
+	add c
+	ld l, a
+	ld a, h
+	adc b
+	ld h, a
+
+	ld a, d
+	add BOARD_LEFT
+
+	; hl += a
+	add l
+	ld l, a
+	ld a, h
+	adc 0
+	ld h, a
 
 	ret
-	
 
-; gets the address of the current peice location
-; @param b = peice id
+
+
+
+
+
+; gets the address of the current Piece location
+; @param b = Piece id
 ; @param c = rotation
 ; @return hl
 GetPieceLocAddress:
@@ -250,12 +409,12 @@ GetPieceLocAddress:
 
 	add c
 
-	; a *= 8 (bytes per peice)
+	; a *= 8 (bytes per Piece)
 	sla a
 	sla a
 	sla a
 
-	ld hl, wPeiceLoc
+	ld hl, wPieceInfo
 	add l
 	ld l, a
 	ld a, h
@@ -316,10 +475,3 @@ InitPieceInfo:
 		jp nz, .loop
 
 	ret
-
-
-	
-	
-
-
-
