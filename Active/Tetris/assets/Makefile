@@ -1,7 +1,7 @@
 EMULICIOUS = /Users/mattsun/GameBoy/Emulicious/Emulicious.jar
 RGBASMFLAGS = -l -Weverything
 RGBLINKFLAGS = -t
-RGBFIXFLAGS = -v -C -p 0xFF
+RGBFIXFLAGS = -v -p 0xFF
 
 CURRENT_DIR = $(shell pwd)
 
@@ -54,7 +54,7 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/vars.o 
+../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
 	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/dmem.o \
@@ -66,7 +66,9 @@ regen:
 		../tmp/graphics.o \
 		../tmp/tetrominos.o \
 		../tmp/tetris.o \
-		../tmp/vars.o
+		../tmp/piece.o \
+		../tmp/vars.o \
+		../tmp/header.o
 	rgbfix $(RGBFIXFLAGS) ../build/$(MAIN).gb
 
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc
@@ -99,8 +101,14 @@ regen:
 ../tmp/tetris.o: src/tetris.asm inc/dmem.inc inc/tetris.inc inc/dma.inc inc/hardware.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
+../tmp/piece.o: src/piece.asm inc/tetris.inc inc/dma.inc
+	rgbasm $(RGBASMFLAGS) -o ../tmp/piece.o src/piece.asm
+
 ../tmp/vars.o: src/vars.asm inc/tetris.inc
 	rgbasm $(RGBASMFLAGS) -o ../tmp/vars.o src/vars.asm
+
+../tmp/header.o: src/header.asm inc/hardware.inc
+	rgbasm $(RGBASMFLAGS) -o ../tmp/header.o src/header.asm
 
 
 graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal: graphics/raw/BG-2.png
