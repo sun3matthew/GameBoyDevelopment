@@ -7,7 +7,7 @@ SECTION "RNG", ROM0
 
 ; generate 4 bytes of randomness from semi random initial wram trash and store them in RNGSEED
 InitRNG::
-    ld de, RNGSEED              
+    ld de, RNGSEED
     ld hl, $C000                
     .repeat                         
         push de                     

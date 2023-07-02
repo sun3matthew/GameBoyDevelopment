@@ -186,7 +186,7 @@ mallocFast::
 ; allocate memory in wram bank, make sure to set bank to the correct bank, end of memory
 ; @param de: size
 ; @return hl: address
-; @destroy a, de, bc
+; @destroy all
 malloc::
     ld hl, DMEM_HEADER_0_LASTALLOCS
     ld [hl], d
@@ -559,7 +559,7 @@ malloc::
 
 ; free memory in wram bank, make sure to set bank to the correct bank
 ; @param hl: address to free
-; @destroy a, bc, de, hl
+; @destroy all
 free::
     ; this is the hard part..
 

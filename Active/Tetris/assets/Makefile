@@ -3,6 +3,11 @@ RGBASMFLAGS = -l -Weverything
 RGBLINKFLAGS = -t
 RGBFIXFLAGS = -v -p 0xFF
 
+#/Users/mattsun/GameBoy/rgbds/
+RGBASM = rgbasm
+RGBLINK = rgblink
+RGBFIX = rgbfix
+
 CURRENT_DIR = $(shell pwd)
 
 MAIN = tetris
@@ -51,16 +56,16 @@ regen:
 	java -cp ../tools/make RegenMakeFile $(CURRENT_DIR)
 
 
-
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
-	rgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
+../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
+	$(RGBLINK) -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
 		../tmp/mem.o \
 		../tmp/dmem.o \
 		../tmp/utils.o \
 		../tmp/input.o \
 		../tmp/dma.o \
+		../tmp/linkedList.o \
 		../tmp/rng.o \
 		../tmp/math.o \
 		../tmp/graphics.o \
@@ -69,46 +74,49 @@ regen:
 		../tmp/piece.o \
 		../tmp/vars.o \
 		../tmp/header.o
-	rgbfix $(RGBFIXFLAGS) ../build/$(MAIN).gb
+	$(RGBFIX) $(RGBFIXFLAGS) ../build/$(MAIN).gb
 
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/mem.o lib/mem.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/mem.o lib/mem.asm
 
 ../tmp/dmem.o: lib/dmem.asm inc/dmem.inc inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/dmem.o lib/dmem.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/dmem.o lib/dmem.asm
 
 ../tmp/utils.o: lib/utils.asm inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/utils.o lib/utils.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/utils.o lib/utils.asm
 
 ../tmp/input.o: lib/input.asm inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/input.o lib/input.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/input.o lib/input.asm
 
 ../tmp/dma.o: lib/dma.asm inc/dma.inc inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/dma.o lib/dma.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/dma.o lib/dma.asm
+
+../tmp/linkedList.o: lib/linkedList.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/linkedList.o lib/linkedList.asm
 
 ../tmp/rng.o: lib/rng.asm inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/rng.o lib/rng.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/rng.o lib/rng.asm
 
 ../tmp/math.o: lib/math.asm
-	rgbasm $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
 ../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
-	rgbasm $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetrominos.o: src/tetrominos.asm
-	rgbasm $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
 
 ../tmp/tetris.o: src/tetris.asm inc/dmem.inc inc/tetris.inc inc/dma.inc inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
 ../tmp/piece.o: src/piece.asm inc/tetris.inc inc/dma.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/piece.o src/piece.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/piece.o src/piece.asm
 
 ../tmp/vars.o: src/vars.asm inc/tetris.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/vars.o src/vars.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/vars.o src/vars.asm
 
 ../tmp/header.o: src/header.asm inc/hardware.inc
-	rgbasm $(RGBASMFLAGS) -o ../tmp/header.o src/header.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/header.o src/header.asm
 
 
 graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal: graphics/raw/BG-2.png

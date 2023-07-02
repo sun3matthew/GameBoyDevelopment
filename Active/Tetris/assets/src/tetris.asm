@@ -132,6 +132,26 @@ Main:
 	cp 10
 	jp nz, .resetFrameEnd
 	
+	call ClearOldPeice
+
+	call MovePieceDown
+	call UpdatePiece
+
+	call DrawPieceOnBoard
+
+	ld de, 16
+	call malloc
+
+	call free
+
+	ld a, 0
+	.resetFrameEnd:
+	ld [wFrameCounter], a
+
+	jp Main
+
+
+ClearOldPeice:
 	; undraw old piece
 	ld a, [wCurrentPiece]
 	push af
@@ -140,24 +160,16 @@ Main:
 	call DrawPieceOnBoard
 	pop af
 	ld [wCurrentPiece], a
+	ret
 
-	/*
-	ld a, [wCurrentRotation]
-	inc a
-	cp 4
-	jp nz, .keepRotation
-	ld a, 0
-	.keepRotation:
-	ld [wCurrentRotation], a
-	*/
-
-	; move down piece
+MovePieceDown:
+	; move piece
 	ld a, [wCurrentY]
 	inc a
 	ld [wCurrentY], a
+	ret
 
-
-	; generate and draw new piece
+UpdatePiece:
 	cp BOARD_HEIGHT - 3
 	jp z, .NewPiece
 	jp .OldPiece
@@ -168,11 +180,6 @@ Main:
 		call LoadPieceLoc
 		call ShiftPieceLoc
 	.PieceEnd
-	call DrawPieceOnBoard
-
-	.resetFrameEnd:
-	ld [wFrameCounter], a
-
-	jp Main
+	ret
 
 
