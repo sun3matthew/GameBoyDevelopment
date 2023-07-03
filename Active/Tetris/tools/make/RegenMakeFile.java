@@ -105,7 +105,7 @@ public class RegenMakeFile {
 
             newLines.add(lineBuffer);
 
-            lineBuffer = "\trgblink -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \\";
+            lineBuffer = "\t$(RGBLINK) -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \\";
             newLines.add(lineBuffer);
 
             for(int i = 0; i < objFiles.size(); i++){
@@ -115,7 +115,7 @@ public class RegenMakeFile {
                 newLines.add(lineBuffer);
             }
 
-            lineBuffer = "\trgbfix $(RGBFIXFLAGS) ../build/$(MAIN).gb";
+            lineBuffer = "\t$(RGBFIX) $(RGBFIXFLAGS) ../build/$(MAIN).gb";
             newLines.add(lineBuffer);
 
             newLines.add("");
@@ -156,7 +156,7 @@ public class RegenMakeFile {
 
 
                 newLines.add(lineBuffer);
-                lineBuffer = "\trgbasm $(RGBASMFLAGS) -o ../tmp/" + objFiles.get(i) + " " + asmFiles.get(i);
+                lineBuffer = "\t$(RGBASM) $(RGBASMFLAGS) -o ../tmp/" + objFiles.get(i) + " " + asmFiles.get(i);
                 newLines.add(lineBuffer);
                 newLines.add("");
             }

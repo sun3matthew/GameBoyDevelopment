@@ -131,6 +131,13 @@ Main:
 	inc a
 	cp 10
 	jp nz, .resetFrameEnd
+
+	ld de, 2
+	call malloc
+
+	ld [hli], 0
+	ld [hl], 0
+
 	
 	call ClearOldPeice
 

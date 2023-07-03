@@ -1,5 +1,91 @@
 SECTION "Linked List", ROM0
 
+; * List structure:
+; 2 bytes for the head pointer
+
+; Create a new empty linked list
+; @return hl: new linked list
+; @destroy all
+LinkedListNew::
+    ld de, 2
+    call malloc
+    ld [hli], 0
+    ld [hl], 0
+    dec hl
+    ret
+
+; Delete a linked list
+; @param hl: linked list
+; @destroy all
+LinkedListDelete::
+    push hl
+    call free
+    pop hl
+
+	ld a, [hli]
+    ld l, [hl]
+    ld h, a
+
+    cp l
+    jp nz LinkedListDelete
+    ret
+
+; Add data to the end of the linked list
+; @param hl: linked list
+; @param bc: data
+LinkedListAppend::
+    push hl
+
+    ld a, [hli]
+    cp [hl]
+    jp nz, .LinkedListAppend
+        call LinkedListNodeNew
+
+        ld d, h
+        ld e, l
+
+        pop hl
+        ld [hli], d
+        ld [hl], e
+
+        dec hl
+        ret
+
+    .LinkedListAppend
+    ld l, [hl]
+    ld h, a
+    call LinkedListNodeAppend
+    pop hl
+    ret
+
+; Remove data from the linked list
+; @param hl: linked list
+; @param bc: data
+; @return hl: linked list head
+LinkedListRemove::
+    push hl
+
+    ld a, [hli]
+    cp [hl]
+    jp nz, .LinkedListRemoveE
+        pop hl
+        ret
+    .LinkedListRemoveE
+    ld l, [hl]
+    ld h, a
+
+    call LinkedListNodeRemove
+    ld d, h
+    ld e, l
+
+    pop hl
+
+    ld [hli], d
+    ld [hl], e
+    ret
+
+
+
 ; Create a new empty node
 ; @param bc: data
 ; @return hl: first node of the linked list
