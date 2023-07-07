@@ -1,5 +1,7 @@
 SECTION "Linked List", ROM0
 
+
+/*
 ; * List structure:
 ; 2 bytes for the head pointer
 
@@ -9,8 +11,9 @@ SECTION "Linked List", ROM0
 LinkedListNew::
     ld de, 2
     call malloc
-    ld [hli], 0
-    ld [hl], 0
+    ld a, 0
+    ld [hli], a
+    ld [hl], a
     dec hl
     ret
 
@@ -27,7 +30,7 @@ LinkedListDelete::
     ld h, a
 
     cp l
-    jp nz LinkedListDelete
+    jp nz, LinkedListDelete
     ret
 
 ; Add data to the end of the linked list
@@ -45,7 +48,8 @@ LinkedListAppend::
         ld e, l
 
         pop hl
-        ld [hli], d
+        ld [hl], a
+        inc hl
         ld [hl], e
 
         dec hl
@@ -80,7 +84,8 @@ LinkedListRemove::
 
     pop hl
 
-    ld [hli], d
+    ld [hl], d
+    inc hl
     ld [hl], e
     ret
 
@@ -92,9 +97,11 @@ LinkedListRemove::
 ; @destroy all
 LinkedListNodeNew::
 	call LinkedListNodeAlloc
-	ld [hli], 0
-	ld [hli], 0
-	ld [hli], b
+    ld a, 0
+	ld [hli], a
+	ld [hli], a
+	ld [hl], b
+    inc hl
 	ld [hl], c
 
 	dec hl
@@ -126,14 +133,17 @@ LinkedListNodeAppend::
 	ld e, l
 
 	pop bc
-	ld [hli], 0
-	ld [hli], 0
-	ld [hli], b
+    ld a, 0
+	ld [hli], a
+	ld [hli], a
+	ld [hl], b
+    inc hl
 	ld [hl], c
 
 	pop hl
-	ld [hli], d
-	ld [hli], e
+	ld [hl], d
+    inc hl
+	ld [hl], e
 	ret
 
 ; Remove a node from the linked list
@@ -204,9 +214,9 @@ LinkedListNodeRemove::
         or l
         jp z, .LinkedListNoPrev
 
-            ld [hli], d
+            ld [hl], d
+            inc hl
             ld [hl], e
-            jp .done
 
             ; free node
             ld h, b
@@ -240,4 +250,4 @@ LinkedListNodeAlloc:
 	ld de, 4
 	call malloc
 	ret
-
+*/

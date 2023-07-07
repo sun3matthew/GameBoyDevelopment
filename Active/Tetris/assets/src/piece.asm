@@ -49,9 +49,13 @@ GetMinYCoord:
 	ret
 
 
+ReloadPeiceInfo::
+	call LoadPieceLoc
+	call ShiftPieceLoc
+	ret
 
 ; load new offsets into wPieceLoc
-LoadPieceLoc::
+LoadPieceLoc:
     ; wPieceLoc:: ds 8; 2 bytes per Piece
 	ld a, [wCurrentPiece]
 	ld b, a
@@ -73,7 +77,7 @@ LoadPieceLoc::
 	ret
 	
 ; update the offset to shift with x and y
-ShiftPieceLoc::
+ShiftPieceLoc:
 	ld hl, wCurrentX
 	ld d, [hl]
 
@@ -104,17 +108,11 @@ DrawPieceOnBoard::
 		ld a, [hli]
 		ld e, a
 
-		; verify e < BOARD_HEIGHT + 2
-		cp BOARD_HEIGHT + 2
-		jp nc, .outOfBounds
-
 		push bc
 		push hl
 		call DrawTileOnBoard
 		pop hl
 		pop bc
-
-		.outOfBounds:
 
 		dec b
 		jp nz, .loop
@@ -170,7 +168,7 @@ GetTileColor:
 ; @param de = xy
 ; @destroy a, bc
 ; @return hl
-GetScreenIdx:
+GetScreenIdx::
 	; de = xy
 
 	ld hl, wShadowSCN_B0

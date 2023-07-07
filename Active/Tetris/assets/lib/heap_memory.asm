@@ -1,29 +1,28 @@
 INCLUDE "inc/hardware.inc"
-INCLUDE "inc/dmem.inc"
+INCLUDE "inc/heap_memory.inc"
 
-SECTION "DMEM Bank 7", WRAMX, BANK[7]
+SECTION "Heap Bank 7", WRAMX, BANK[7]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 6", WRAMX, BANK[6]
+SECTION "Heap Bank 6", WRAMX, BANK[6]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 5", WRAMX, BANK[5]
+SECTION "Heap Bank 5", WRAMX, BANK[5]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 4", WRAMX, BANK[4]
+SECTION "Heap Bank 4", WRAMX, BANK[4]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 3", WRAMX, BANK[3]
+SECTION "Heap Bank 3", WRAMX, BANK[3]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 2", WRAMX, BANK[2]
+SECTION "Heap Bank 2", WRAMX, BANK[2]
     ds WRAM_SIZE
 
-SECTION "DMEM Bank 1", WRAMX, BANK[1]
-    ds WRAM_SIZE
+;SECTION "Heap Bank 1", WRAMX, BANK[1]
+;    ds WRAM_SIZE
 
-
-SECTION "DMEM", ROM0
+SECTION "HEAP_MEMORY", ROM0
 ; * for efficiency, have simmilar memory sizes together (bank)
 ; Header Structure:
 ; 0xD000 - 0xD010: dmem metadata * don't try to skimp out of this sh~t, its required
@@ -46,23 +45,24 @@ SECTION "DMEM", ROM0
 
 ; clean dmem
 ; @destroy a, hl
-DMEM_reset::
+Heap_reset::
     ld a, NUM_BANK
     .loop
         ld [rSVBK], a
 
         push af
-        call DMEM_reset_bank
+        call Heap_reset_bank
         pop af
 
         dec a
+        cp 1
         jp nz, .loop
     ret
 
 ; clean one bank of dmem, set all to 0
 ; @destroy a, hl
-DMEM_reset_bank::
-    ld hl, DMEM_HEADER_0
+Heap_reset_bank::
+    ld hl, HEAP_HEADER_0
     
     ld a, 0
 
@@ -70,9 +70,9 @@ DMEM_reset_bank::
 
     ld [hli], a
 
-    ld a, HIGH(DMEM_START)
+    ld a, HIGH(HEAP_START)
     ld [hli], a
-    ld a, LOW(DMEM_START) 
+    ld a, LOW(HEAP_START) 
     ld [hli], a
 
     ld a, 0
@@ -87,14 +87,14 @@ DMEM_reset_bank::
 ; @param de: size
 ; @return hl: address
 ; @destroy a, de, bc
-mallocFast::
+Heap_mallocFast::
     ; check if there is enough space for metadata
         ; load length into a
-        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        ld a, [HEAP_HEADER_0_NUMADDRESS]
 
         ; check if there is enough space for metadata
         ; if a == MAX_NUM
-        cp DMEM_HEADER_1_ENTRIES
+        cp HEAP_HEADER_1_ENTRIES
         jp nz, .hasSpaceMeta
 
         ;! not enough space for meta, return 0
@@ -104,7 +104,7 @@ mallocFast::
         .hasSpaceMeta
 
     ; no gaps, see if there is enough space at the end of memory
-    ld hl, DMEM_HEADER_0_ENDOFMEM
+    ld hl, HEAP_HEADER_0_ENDOFMEM
     ld a, [hli]
     ld b, a
     ld a, [hl]
@@ -121,7 +121,7 @@ mallocFast::
     adc d
     ld b, a
     
-    ld hl, DMEM_END
+    ld hl, HEAP_END
     ; bc = new end of memory
     ; see if there is enough space
     ; only need to check high byte since no number can be bigger than 0xFF
@@ -140,7 +140,7 @@ mallocFast::
     .hasSpace
 
     ; increment number of memory addresses
-    ld hl, DMEM_HEADER_0_NUMADDRESS
+    ld hl, HEAP_HEADER_0_NUMADDRESS
     ld a, [hl]
     inc a
     ld [hli], a
@@ -155,7 +155,7 @@ mallocFast::
 
 
     ; add new entry of the start address to the memory address header
-    ld hl, DMEM_HEADER_1
+    ld hl, HEAP_HEADER_1
 
     ; multiply a by 2
     dec a
@@ -187,19 +187,19 @@ mallocFast::
 ; @param de: size
 ; @return hl: address
 ; @destroy all
-malloc::
-    ld hl, DMEM_HEADER_0_LASTALLOCS
+Heap_malloc::
+    ld hl, HEAP_HEADER_0_LASTALLOCS
     ld [hl], d
     inc hl
     ld [hl], e
 
     ; check if there is enough space for metadata
         ; load length into a
-        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        ld a, [HEAP_HEADER_0_NUMADDRESS]
 
         ; check if there is enough space for metadata
         ; if a == MAX_NUM
-        cp DMEM_HEADER_1_ENTRIES
+        cp HEAP_HEADER_1_ENTRIES
         jp nz, .hasSpaceMeta
 
         ;! not enough space for meta, return 0
@@ -211,10 +211,10 @@ malloc::
     ; scan the gaps
 
         ; load length into a
-        ld a, [DMEM_HEADER_0_NUMGAPS]
+        ld a, [HEAP_HEADER_0_NUMGAPS]
 
         ; load gap header start into hl
-        ld hl, DMEM_HEADER_2
+        ld hl, HEAP_HEADER_2
 
         ; calculate end of memory gap header
         sla a
@@ -230,7 +230,7 @@ malloc::
         dec hl
 
         ; load length into b
-        ld a, [DMEM_HEADER_0_NUMGAPS]
+        ld a, [HEAP_HEADER_0_NUMGAPS]
         ld b, a
 
         ; itterate through gaps in reverse order
@@ -268,7 +268,7 @@ malloc::
 
     .noGap
         ; no gaps, see if there is enough space at the end of memory
-        ld hl, DMEM_HEADER_0_ENDOFMEM
+        ld hl, HEAP_HEADER_0_ENDOFMEM
         ld a, [hli]
         ld b, a
         ld a, [hl]
@@ -285,7 +285,7 @@ malloc::
         adc d
         ld b, a
         
-        ld hl, DMEM_END
+        ld hl, HEAP_END
         ; bc = new end of memory
         ; see if there is enough space
         ; only need to check high byte since no number can be bigger than 0xFF
@@ -304,7 +304,7 @@ malloc::
         .hasSpace
 
         ; increment number of memory addresses
-        ld hl, DMEM_HEADER_0_NUMADDRESS
+        ld hl, HEAP_HEADER_0_NUMADDRESS
         ld a, [hl]
         inc a
         ld [hli], a
@@ -319,7 +319,7 @@ malloc::
 
 
         ; add new entry of the start address to the memory address header
-        ld hl, DMEM_HEADER_1
+        ld hl, HEAP_HEADER_1
 
         ; multiply a by 2
         dec a
@@ -370,7 +370,7 @@ malloc::
         dec hl
 
         push hl
-        ld hl, DMEM_HEADER_0_LASTALLOCS
+        ld hl, HEAP_HEADER_0_LASTALLOCS
         ld d, [hl]
         inc hl
         ld e, [hl]
@@ -402,7 +402,7 @@ malloc::
 
                 ; setup bc
                 pop bc
-                ld a, [DMEM_HEADER_0_NUMGAPS]
+                ld a, [HEAP_HEADER_0_NUMGAPS]
                 sub b
                 sla a
                 sla a
@@ -412,7 +412,7 @@ malloc::
                 call MemcopyLen
 
                 ; decrement number of gaps
-                ld hl, DMEM_HEADER_0_NUMGAPS
+                ld hl, HEAP_HEADER_0_NUMGAPS
                 dec [hl]
 
                 jp .fullE
@@ -457,9 +457,9 @@ malloc::
             pop de
             push de
 
-            ld hl, DMEM_HEADER_1
+            ld hl, HEAP_HEADER_1
 
-            ld a, [DMEM_HEADER_0_NUMADDRESS]
+            ld a, [HEAP_HEADER_0_NUMADDRESS]
             cp 0
             jp z, .emptyAddressList
 
@@ -484,7 +484,7 @@ malloc::
             .loopAddressesE
 
         inc hl
-        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        ld a, [HEAP_HEADER_0_NUMADDRESS]
         sub c
         ld b, a
 
@@ -494,7 +494,7 @@ malloc::
             ; b = index of address entry
 
             ; setup bc
-            ld a, [DMEM_HEADER_0_NUMADDRESS]
+            ld a, [HEAP_HEADER_0_NUMADDRESS]
             sub b
             sla a
             ld b, 0
@@ -538,7 +538,7 @@ malloc::
             ld [hl], e
 
             ; increment number of memory addresses
-            ld hl, DMEM_HEADER_0_NUMADDRESS
+            ld hl, HEAP_HEADER_0_NUMADDRESS
             inc [hl]
 
 
@@ -560,7 +560,7 @@ malloc::
 ; free memory in wram bank, make sure to set bank to the correct bank
 ; @param hl: address to free
 ; @destroy all
-free::
+Heap_free::
     ; this is the hard part..
 
     ; find the address in the memory address header
@@ -568,7 +568,7 @@ free::
         ld e, l
 
         ; load gap header start into hl
-        ld hl, DMEM_HEADER_1
+        ld hl, HEAP_HEADER_1
 
         ld b, 0
 
@@ -612,7 +612,7 @@ free::
         inc de
 
         ; setup bc
-        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        ld a, [HEAP_HEADER_0_NUMADDRESS]
         sub b
         sla a
         ld b, 0
@@ -620,7 +620,7 @@ free::
 
         call MemcopyLen
 
-        ld hl, DMEM_HEADER_0_NUMADDRESS
+        ld hl, HEAP_HEADER_0_NUMADDRESS
         dec [hl]
 
 
@@ -633,12 +633,12 @@ free::
     ; calculate gap size
 
         ; check if is last entry
-        ld a, [DMEM_HEADER_0_NUMADDRESS]
+        ld a, [HEAP_HEADER_0_NUMADDRESS]
         cp b
         jp nz, .notLast
 
         .isLast
-            ld hl, DMEM_HEADER_0_ENDOFMEM
+            ld hl, HEAP_HEADER_0_ENDOFMEM
             ld b, [hl]
             inc hl
             ld c, [hl]
@@ -675,9 +675,9 @@ free::
 
         push bc
 
-        ld hl, DMEM_HEADER_2
+        ld hl, HEAP_HEADER_2
 
-        ld a, [DMEM_HEADER_0_NUMGAPS]
+        ld a, [HEAP_HEADER_0_NUMGAPS]
         ld b, a
 
         ; itterate through addresses
@@ -696,7 +696,7 @@ free::
             inc hl
             ld [hl], c
 
-            ld hl, DMEM_HEADER_0_NUMGAPS
+            ld hl, HEAP_HEADER_0_NUMGAPS
             inc [hl]
 
             ret
@@ -726,7 +726,7 @@ free::
 
 
         ld a, b
-        ld [DMEM_HEADER_0_LASTALLOCS], a
+        ld [HEAP_HEADER_0_LASTALLOCS], a
 
         ; calculate new gap size, bc -= free gap size
 
@@ -771,10 +771,10 @@ free::
         dec hl
 
         ; check if it has a front
-        ld a, [DMEM_HEADER_0_LASTALLOCS]
+        ld a, [HEAP_HEADER_0_LASTALLOCS]
         ld b, a
         inc b
-        ld a, [DMEM_HEADER_0_NUMGAPS]
+        ld a, [HEAP_HEADER_0_NUMGAPS]
         cp b
         jp z, .checkFront
         dec hl
@@ -837,8 +837,8 @@ free::
 
                     ; check if is last entry
                     ; set bc to the end of memory
-                    ld bc, DMEM_HEADER_2
-                    ld a, [DMEM_HEADER_0_NUMGAPS]
+                    ld bc, HEAP_HEADER_2
+                    ld a, [HEAP_HEADER_0_NUMGAPS]
                     sla a
                     sla a
                     add c
@@ -911,8 +911,8 @@ free::
                         ; shift everything forward
                         ; setup bc
                             ; bc = end of memory
-                            ld bc, DMEM_HEADER_2
-                            ld a, [DMEM_HEADER_0_NUMGAPS]
+                            ld bc, HEAP_HEADER_2
+                            ld a, [HEAP_HEADER_0_NUMGAPS]
                             sla a
                             sla a
                             add c
@@ -942,7 +942,7 @@ free::
                         call MemcopyLen
 
                         ; decrement number of gaps
-                        ld hl, DMEM_HEADER_0_NUMGAPS
+                        ld hl, HEAP_HEADER_0_NUMGAPS
                         dec [hl]
 
                     .cantMergeBackWF
@@ -1000,9 +1000,9 @@ free::
                 ; hl = gap entry of back
 
                 ; check if enough space
-                ld a, [DMEM_HEADER_0_NUMGAPS]
+                ld a, [HEAP_HEADER_0_NUMGAPS]
 
-                cp DMEM_HEADER_2_ENTRIES
+                cp HEAP_HEADER_2_ENTRIES
                 jp z, .isLastEntry ;! bad code
 
                 push de
@@ -1011,8 +1011,8 @@ free::
 
                 ; setup bc
                     ; bc = end of memory
-                    ld bc, DMEM_HEADER_2
-                    ld a, [DMEM_HEADER_0_NUMGAPS]
+                    ld bc, HEAP_HEADER_2
+                    ld a, [HEAP_HEADER_0_NUMGAPS]
                     sla a
                     sla a
                     add c
@@ -1078,7 +1078,7 @@ free::
                 ld [hl], c
 
                 ; increment number of gaps
-                ld hl, DMEM_HEADER_0_NUMGAPS
+                ld hl, HEAP_HEADER_0_NUMGAPS
                 inc [hl]
 
                 ret

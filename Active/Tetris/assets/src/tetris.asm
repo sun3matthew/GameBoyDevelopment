@@ -1,6 +1,5 @@
 INCLUDE "inc/hardware.inc"
 INCLUDE "inc/dma.inc"
-INCLUDE "inc/dmem.inc"
 
 INCLUDE "inc/tetris.inc"
 
@@ -25,8 +24,8 @@ SECTION "Header", ROM0[$150]
 	; init RNG
 	call InitRNG
 
-	; init DMEM
-	call DMEM_reset
+	; init Heap memory
+	call Heap_reset
 
 	; init vars
 	call InitVars
@@ -126,37 +125,246 @@ Main:
 	call DMATransfer
 
 	call UpdateKeys
+	call ClearOldPeice
+	call StorePreviousPositions
 
 	ld a, [wFrameCounter]
 	inc a
-	cp 10
+	cp 20
 	jp nz, .resetFrameEnd
 
-	ld de, 2
-	call malloc
-
-	ld [hli], 0
-	ld [hl], 0
-
-	
-	call ClearOldPeice
-
-	call MovePieceDown
-	call UpdatePiece
-
-	call DrawPieceOnBoard
-
-	ld de, 16
-	call malloc
-
-	call free
+	ld a, [wCurrentY]
+	inc a
+	ld [wCurrentY], a
+	call TestNewPosition
+	cp 1
+	jp z, .collision
 
 	ld a, 0
 	.resetFrameEnd:
 	ld [wFrameCounter], a
 
+
+	call StorePreviousPositions
+	call HandleInputsC
+	call TestNewPosition
+	cp 1
+	jp z, .collision
+
+
+	call StorePreviousPositions
+	call HandleInputsNC
+	call TestNewPosition
+	cp 0
+	jp z, .collisionEnd
+	call ResetToOldPosition
+	jp .collisionEnd
+
+	.collision
+	call ResetToOldPosition
+	call ReloadPeiceInfo
+	call DrawPieceOnBoard
+
+	call CheckForFullRows
+
+
+	call GeneratePiece
+
+
+	jp .end
+	.collisionEnd
+	call ReloadPeiceInfo
+
+	.end:
+	call DrawPieceOnBoard
+
+	ldh [c], a
+
 	jp Main
 
+
+
+StorePreviousPositions:
+	ld a, [wCurrentX]
+	ld [wPreviousX], a
+	ld a, [wCurrentY]
+	ld [wPreviousY], a
+	ld a, [wCurrentRotation]
+	ld [wPreviousRotation], a
+	ret
+
+ResetToOldPosition:
+	ld a, [wPreviousX]
+	ld [wCurrentX], a
+	ld a, [wPreviousY]
+	ld [wCurrentY], a
+	ld a, [wPreviousRotation]
+	ld [wCurrentRotation], a
+	ret
+
+; set a = 0 if valid, 1 if invalid
+TestNewPosition:
+	call ReloadPeiceInfo
+	ld hl, wPieceLoc
+	ld b, 4
+	.loop
+		ld a, [hli]
+		ld d, a
+		cp BOARD_LEFT - 1
+		jp z, .invalid
+
+		cp BOARD_RIGHT - 1
+		jp z, .invalid
+
+		ld a, [hli]
+		ld e, a
+		cp BOARD_HEIGHT
+		jp z, .invalid
+
+
+		push hl
+		push bc
+
+		call GetScreenIdx
+		ld a, [hl]
+		cp 1
+		jp nz, .invalidFromTile
+
+		pop bc
+		pop hl
+
+		dec b
+		jp nz, .loop
+	.valid
+	ld a, 0
+	ret
+	.invalidFromTile
+	pop af
+	pop af
+	.invalid
+	ld a, 1
+	ret
+
+HandleInputsNC:
+	.left:
+	ld a, [wNewKeys]
+	bit PADB_LEFT, a
+	jp z, .leftHold
+		ld a, [wCurrentX]
+		dec a
+		ld [wCurrentX], a
+		ld a, MOVEDELAY1
+		ld [wMoveTimersLeft], a
+		jp .rotate
+
+
+	.leftHold:
+	ld a, [wCurKeys]
+	bit PADB_LEFT, a
+	jp z, .right
+		ld a, [wMoveTimersLeft]
+		dec a
+		ld [wMoveTimersLeft], a
+		jp nz, .rotate
+
+		ld a, MOVEDELAY2
+		ld [wMoveTimersLeft], a
+
+		ld a, [wCurrentX]
+		dec a
+		ld [wCurrentX], a
+		jp .rotate
+		
+	.right:
+	ld a, [wNewKeys]
+	bit PADB_RIGHT, a
+	jp z, .rightHold
+		ld a, [wCurrentX]
+		inc a
+		ld [wCurrentX], a
+		ld a, MOVEDELAY1
+		ld [wMoveTimersRight], a
+		jp .rotate
+	
+	.rightHold:
+	ld a, [wCurKeys]
+	bit PADB_RIGHT, a
+	jp z, .rotateC
+		ld a, [wMoveTimersRight]
+		dec a
+		ld [wMoveTimersRight], a
+		jp nz, .rotate
+
+		ld a, MOVEDELAY2
+		ld [wMoveTimersRight], a
+
+		ld a, [wCurrentX]
+		inc a
+		ld [wCurrentX], a
+		jp .rotate
+
+	.rotate
+	
+	.rotateC:
+	ld a, [wNewKeys]
+	bit PADB_A, a
+	jp z, .rotateCW
+		ld a, [wCurrentRotation]
+		inc a
+		ld [wCurrentRotation], a
+		cp 4
+		jp nz, .end
+		ld a, 0
+		ld [wCurrentRotation], a
+		ret
+	
+	.rotateCW
+	ld a, [wNewKeys]
+	bit PADB_B, a
+	jp z, .end
+		ld a, [wCurrentRotation]
+		dec a
+		ld [wCurrentRotation], a
+		cp $FF
+		jp nz, .end
+		ld a, 3
+		ld [wCurrentRotation], a
+		ret
+
+	.end
+	ret
+
+HandleInputsC:
+	.down:
+	ld a, [wNewKeys]
+	bit PADB_DOWN, a
+	jp z, .downHold
+		ld a, [wCurrentY]
+		inc a
+		ld [wCurrentY], a
+		ld a, PUSHDOWNDELAY
+		ld [wMoveTimersDown], a
+		ret
+	
+	.downHold:
+	ld a, [wCurKeys]
+	bit PADB_DOWN, a
+	jp z, .end
+		ld a, [wMoveTimersDown]
+		dec a
+		ld [wMoveTimersDown], a
+		jp nz, .end
+
+		ld a, PUSHDOWNDELAY
+		ld [wMoveTimersDown], a
+
+		ld a, [wCurrentY]
+		inc a
+		ld [wCurrentY], a
+		ret
+	
+	.end
+	ret
 
 ClearOldPeice:
 	; undraw old piece
@@ -169,24 +377,13 @@ ClearOldPeice:
 	ld [wCurrentPiece], a
 	ret
 
-MovePieceDown:
-	; move piece
-	ld a, [wCurrentY]
-	inc a
-	ld [wCurrentY], a
-	ret
 
-UpdatePiece:
-	cp BOARD_HEIGHT - 3
-	jp z, .NewPiece
-	jp .OldPiece
-	.NewPiece:
-		call GeneratePiece
-		jp .PieceEnd
-	.OldPiece:
-		call LoadPieceLoc
-		call ShiftPieceLoc
-	.PieceEnd
+CheckForFullRows:
 	ret
+	ld hl, wPieceLoc
+	ld b, 4
+	.loop
+
+
 
 

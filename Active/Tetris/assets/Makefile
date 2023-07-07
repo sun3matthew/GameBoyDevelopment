@@ -58,16 +58,17 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/rng.o ../tmp/math.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
+../build/$(MAIN).gb: ../tmp/stack_memory.o ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/rng.o ../tmp/math.o ../tmp/heap_memory.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
 	$(RGBLINK) -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
+		../tmp/stack_memory.o \
 		../tmp/mem.o \
-		../tmp/dmem.o \
 		../tmp/utils.o \
 		../tmp/input.o \
 		../tmp/dma.o \
 		../tmp/linkedList.o \
 		../tmp/rng.o \
 		../tmp/math.o \
+		../tmp/heap_memory.o \
 		../tmp/graphics.o \
 		../tmp/tetrominos.o \
 		../tmp/tetris.o \
@@ -76,11 +77,11 @@ regen:
 		../tmp/header.o
 	$(RGBFIX) $(RGBFIXFLAGS) ../build/$(MAIN).gb
 
+../tmp/stack_memory.o: lib/stack_memory.asm inc/stack_memory.inc inc/hardware.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/stack_memory.o lib/stack_memory.asm
+
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/mem.o lib/mem.asm
-
-../tmp/dmem.o: lib/dmem.asm inc/dmem.inc inc/hardware.inc
-	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/dmem.o lib/dmem.asm
 
 ../tmp/utils.o: lib/utils.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/utils.o lib/utils.asm
@@ -100,13 +101,16 @@ regen:
 ../tmp/math.o: lib/math.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
+../tmp/heap_memory.o: lib/heap_memory.asm inc/hardware.inc inc/heap_memory.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/heap_memory.o lib/heap_memory.asm
+
 ../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetrominos.o: src/tetrominos.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
 
-../tmp/tetris.o: src/tetris.asm inc/dmem.inc inc/tetris.inc inc/dma.inc inc/hardware.inc
+../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/dma.inc inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
 ../tmp/piece.o: src/piece.asm inc/tetris.inc inc/dma.inc

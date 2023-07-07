@@ -12,6 +12,14 @@ SECTION "Vars", WRAM0
     wCurrentX:: db
     wCurrentY:: db
 
+    wPreviousRotation:: db
+    wPreviousX:: db
+    wPreviousY:: db
+
+    wMoveTimersLeft:: db
+    wMoveTimersRight:: db
+    wMoveTimersDown:: db
+
 SECTION "Piece Info", WRAM0, ALIGN[4]
     wPieceInfo:: ds 2*4*4*NUM_PIECES
 
