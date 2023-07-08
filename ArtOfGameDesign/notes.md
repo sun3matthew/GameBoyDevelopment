@@ -25,6 +25,9 @@ I'm also trying to justify why I'm making games on the gameboy, since I feel lik
   - [Talk to Strangers](#talk-to-strangers)
   - [The map](#the-map)
 - [In the Beginning, There is the Designer - 1](#in-the-beginning-there-is-the-designer---1)
+  - [The most import skill](#the-most-import-skill)
+  - [The Secret of the gifted](#the-secret-of-the-gifted)
+- [The Designer Creates an *Experience* - 2](#the-designer-creates-an-experience---2)
 
 ` `  
 ` `  
@@ -84,8 +87,40 @@ More so refers to the strangers of techniques, practices and principles. Don't j
 
 # In the Beginning, There is the Designer - 1
 
+This chapter trying to bring out the motivation for doing this, where ppl are afraid to start making games. I, don't have this problem. But I will take away the fact that I should be more confident in my abilities.
+
+The man in the arena
+
+“It is not the critic who counts; not the man who points out how the strong man stumbles, or where the doer of deeds could have done them better. The credit belongs to the man who is actually in the arena, whose face is marred by dust and sweat and blood; who strives valiantly; who errs, who comes short again and again, because there is no effort without error and shortcoming; but who does actually strive to do the deeds; who knows great enthusiasms, the great devotions; who spends himself in a worthy cause; who at the best knows in the end the triumph of high achievement, and who at the worst, if he fails, at least fails while daring greatly, so that his place shall never be with those cold and timid souls who neither know victory nor defeat.”
+
+Theodore Roosevelt
+
+Not a quote from the textbook, just a good one in general that aligns.
+
+## The most import skill
+
+Listening. 5 major catagories, Team, Audience, Game, Client and Self. (tf does self mean). You must be deeply listening, the comparison they use when a friend says "I'm fine" when their body language says they're not.
+
+Accept the possibility that what you hear may upset you. But you have to be open minded, be like a child who knows nothing but does everything.
+
+**Team** - everyone will have their strong suits, you need to listen to make sure everyone is being included.
+
+**Audience** - thats where your money is, they they don't like it, then you fucking failed.
+
+**Game** - Like a car mechanic who how a engine is broken just by hearing it run.
+
+**Client** - The people funding you, give them what they want.
+
+**Self** - ??? "the secret behind your tremendous creativity"
+
+I feel like for my purposes, will focus on Audience, Game and Self. I'll deal with team when I get one/join one.
+
+## The Secret of the gifted
+
+Like fls said, people aren't born gifted, they worked their asses off to become gifted.
 
 
+# The Designer Creates an *Experience* - 2
 
 
 
