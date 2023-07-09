@@ -1,26 +1,5 @@
 INCLUDE "inc/hardware.inc"
-INCLUDE "inc/heap_memory.inc"
-
-SECTION "Heap Bank 7", WRAMX, BANK[7]
-    ds WRAM_SIZE
-
-SECTION "Heap Bank 6", WRAMX, BANK[6]
-    ds WRAM_SIZE
-
-SECTION "Heap Bank 5", WRAMX, BANK[5]
-    ds WRAM_SIZE
-
-SECTION "Heap Bank 4", WRAMX, BANK[4]
-    ds WRAM_SIZE
-
-SECTION "Heap Bank 3", WRAMX, BANK[3]
-    ds WRAM_SIZE
-
-SECTION "Heap Bank 2", WRAMX, BANK[2]
-    ds WRAM_SIZE
-
-;SECTION "Heap Bank 1", WRAMX, BANK[1]
-;    ds WRAM_SIZE
+INCLUDE "inc/heapMemory.inc"
 
 SECTION "HEAP_MEMORY", ROM0
 ; * for efficiency, have simmilar memory sizes together (bank)
@@ -43,25 +22,9 @@ SECTION "HEAP_MEMORY", ROM0
 ; *     This means the previous memory adress just "owns" that space
 ; *     Freeing that adress will free the full memory
 
-; clean dmem
-; @destroy a, hl
-Heap_reset::
-    ld a, NUM_BANK
-    .loop
-        ld [rSVBK], a
-
-        push af
-        call Heap_reset_bank
-        pop af
-
-        dec a
-        cp 1
-        jp nz, .loop
-    ret
-
 ; clean one bank of dmem, set all to 0
 ; @destroy a, hl
-Heap_reset_bank::
+HeapResetBank::
     ld hl, HEAP_HEADER_0
     
     ld a, 0
@@ -78,16 +41,13 @@ Heap_reset_bank::
     ld a, 0
     ld [hli], a
     ld [hli], a
-
-
-
     ret
 
 ; allocate memory fast (does not fill fragmented memory) in wram bank, make sure to set bank to the correct bank, end of memory
 ; @param de: size
 ; @return hl: address
 ; @destroy a, de, bc
-Heap_mallocFast::
+HeapMallocFast::
     ; check if there is enough space for metadata
         ; load length into a
         ld a, [HEAP_HEADER_0_NUMADDRESS]
@@ -121,7 +81,7 @@ Heap_mallocFast::
     adc d
     ld b, a
     
-    ld hl, HEAP_END
+    ld hl, MEM_END
     ; bc = new end of memory
     ; see if there is enough space
     ; only need to check high byte since no number can be bigger than 0xFF
@@ -187,7 +147,7 @@ Heap_mallocFast::
 ; @param de: size
 ; @return hl: address
 ; @destroy all
-Heap_malloc::
+HeapMalloc::
     ld hl, HEAP_HEADER_0_LASTALLOCS
     ld [hl], d
     inc hl
@@ -285,7 +245,7 @@ Heap_malloc::
         adc d
         ld b, a
         
-        ld hl, HEAP_END
+        ld hl, MEM_END
         ; bc = new end of memory
         ; see if there is enough space
         ; only need to check high byte since no number can be bigger than 0xFF
@@ -560,7 +520,7 @@ Heap_malloc::
 ; free memory in wram bank, make sure to set bank to the correct bank
 ; @param hl: address to free
 ; @destroy all
-Heap_free::
+HeapFree::
     ; this is the hard part..
 
     ; find the address in the memory address header

@@ -58,17 +58,20 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/stack_memory.o ../tmp/mem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/rng.o ../tmp/math.o ../tmp/heap_memory.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
+../build/$(MAIN).gb: ../tmp/heapMemory.o ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/stackMemory.o ../tmp/rng.o ../tmp/math.o ../tmp/debugPrint.o ../tmp/memoryBank.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
 	$(RGBLINK) -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
-		../tmp/stack_memory.o \
+		../tmp/heapMemory.o \
 		../tmp/mem.o \
+		../tmp/dmem.o \
 		../tmp/utils.o \
 		../tmp/input.o \
 		../tmp/dma.o \
 		../tmp/linkedList.o \
+		../tmp/stackMemory.o \
 		../tmp/rng.o \
 		../tmp/math.o \
-		../tmp/heap_memory.o \
+		../tmp/debugPrint.o \
+		../tmp/memoryBank.o \
 		../tmp/graphics.o \
 		../tmp/tetrominos.o \
 		../tmp/tetris.o \
@@ -77,11 +80,14 @@ regen:
 		../tmp/header.o
 	$(RGBFIX) $(RGBFIXFLAGS) ../build/$(MAIN).gb
 
-../tmp/stack_memory.o: lib/stack_memory.asm inc/stack_memory.inc inc/hardware.inc
-	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/stack_memory.o lib/stack_memory.asm
+../tmp/heapMemory.o: lib/heapMemory.asm inc/heapMemory.inc inc/hardware.inc inc/memoryBank.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/heapMemory.o lib/heapMemory.asm
 
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/mem.o lib/mem.asm
+
+../tmp/dmem.o: lib/dmem.asm inc/heapMemory.inc inc/stackMemory.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/dmem.o lib/dmem.asm
 
 ../tmp/utils.o: lib/utils.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/utils.o lib/utils.asm
@@ -95,14 +101,20 @@ regen:
 ../tmp/linkedList.o: lib/linkedList.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/linkedList.o lib/linkedList.asm
 
+../tmp/stackMemory.o: lib/stackMemory.asm inc/stackMemory.inc inc/hardware.inc inc/memoryBank.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/stackMemory.o lib/stackMemory.asm
+
 ../tmp/rng.o: lib/rng.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/rng.o lib/rng.asm
 
 ../tmp/math.o: lib/math.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
-../tmp/heap_memory.o: lib/heap_memory.asm inc/hardware.inc inc/heap_memory.inc
-	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/heap_memory.o lib/heap_memory.asm
+../tmp/debugPrint.o: lib/debugPrint.asm inc/memoryBank.inc inc/debugPrint.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/debugPrint.o lib/debugPrint.asm
+
+../tmp/memoryBank.o: lib/memoryBank.asm inc/hardware.inc
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/memoryBank.o lib/memoryBank.asm
 
 ../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm

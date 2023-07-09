@@ -24,8 +24,11 @@ SECTION "Header", ROM0[$150]
 	; init RNG
 	call InitRNG
 
-	; init Heap memory
-	call Heap_reset
+	; init dmem memory
+	call DmemReset
+
+	; init debug print
+	call DebugPrintReset
 
 	; init vars
 	call InitVars
@@ -128,6 +131,13 @@ Main:
 	call ClearOldPeice
 	call StorePreviousPositions
 
+	call DebugPrintRegisters
+
+	jp printStatus
+	db "THIS IS A TEST"
+	printStatus:
+	call DebugPrint
+
 	ld a, [wFrameCounter]
 	inc a
 	cp 20
@@ -178,7 +188,7 @@ Main:
 	.end:
 	call DrawPieceOnBoard
 
-	ldh [c], a
+	call DebugIncrementCounter
 
 	jp Main
 
@@ -383,7 +393,3 @@ CheckForFullRows:
 	ld hl, wPieceLoc
 	ld b, 4
 	.loop
-
-
-
-

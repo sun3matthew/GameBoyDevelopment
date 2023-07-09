@@ -1,0 +1,10 @@
+
+IF !DEF(MEMBANK_INC) ;include guard
+    DEF MEMBANK_INC EQU 1
+
+DEF WRAM_SIZE              EQU $1000
+DEF MEM_HEADER             EQU $D000
+DEF MEM_END                EQU MEM_HEADER + WRAM_SIZE - 1
+
+
+    ENDC ;MEMBANK_INC
