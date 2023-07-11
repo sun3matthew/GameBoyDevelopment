@@ -79,15 +79,28 @@ DebugPrint::
     ; JP n16 -> 3 bytes
 
     pop hl ; return address
+    ld d ,h
+    ld e, l
+    
+    ; loop fowards till null byte
+    ld c, 0
+    .loop
+        inc c
+        ld a, [hli]
+        cp 0
+        jp nz, .loop
+
     push hl
 
-    ; sub 17 (14 + 3)
-    ld a, l
-    sub 17
-    ld e, a
-    ld a, h
-    sbc 0
-    ld d, a
+    dec c
+
+    ; make sure c < 14
+    ld a, c
+    cp 14
+    jp c, .skip
+    ld c, 14
+    .skip
+    push bc
 
     ld hl, wAddressCounter
     ld a, [hli]
@@ -96,9 +109,24 @@ DebugPrint::
     inc hl
     inc hl
 
-    ld bc, 14
+    ld b, 0
 
     call MemcopyLen
+
+    ; fill rest of buffer with null bytes
+
+    pop bc
+    ; c = 14 - c
+    ld a, 14
+    sub c
+    jp z, .skip2
+    ld c, a
+
+    ld d, $0
+
+    call MemSet
+    
+    .skip2:
 
     call UpdateDebugLog
 
@@ -186,7 +214,7 @@ DebugPrintRegisters::
     ld a, [wTempDebugDE + 1]
     ld [hli], a
 
-    ld [hl], $F0
+    ld [hl], $00
     inc hl
 
     ld a, [wTempDebugHL]

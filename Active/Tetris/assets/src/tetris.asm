@@ -133,10 +133,8 @@ Main:
 
 	call DebugPrintRegisters
 
-	jp printStatus
-	db "THIS IS A TEST"
-	printStatus:
 	call DebugPrint
+	db "asdfasdf THIS FUCK asdf", 0
 
 	ld a, [wFrameCounter]
 	inc a
