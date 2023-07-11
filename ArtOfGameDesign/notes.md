@@ -119,15 +119,9 @@ I feel like for my purposes, will focus on Audience, Game and Self. I'll deal wi
 
 Like fls said, people aren't born gifted, they worked their asses off to become gifted.
 
+` `  
+` `  
+` `  
 
 # The Designer Creates an *Experience* - 2
-
-
-
-
-
-
-
-
-
 
