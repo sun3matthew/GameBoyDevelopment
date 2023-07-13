@@ -28,6 +28,12 @@ I'm also trying to justify why I'm making games on the gameboy, since I feel lik
   - [The most import skill](#the-most-import-skill)
   - [The Secret of the gifted](#the-secret-of-the-gifted)
 - [The Designer Creates an *Experience* - 2](#the-designer-creates-an-experience---2)
+  - [The game is Not the Experience](#the-game-is-not-the-experience)
+  - [Is This Unique to Games?](#is-this-unique-to-games)
+  - [Three practical Approaches to Chasing Rainbows](#three-practical-approaches-to-chasing-rainbows)
+    - [Psychology](#psychology)
+    - [Anthropology](#anthropology)
+    - [Design](#design)
 
 ` `  
 ` `  
@@ -125,3 +131,47 @@ Like fls said, people aren't born gifted, they worked their asses off to become 
 
 # The Designer Creates an *Experience* - 2
 
+"What is the game designer's goal?", what is the magic that happens when the game is played? The experience. Each persons experience is unique. Aka, focus on each player's lasting impression on the game and how they interacted with it.
+
+## The game is Not the Experience
+
+The game enables the experience but it is not the experience. "If a tree falls in the forest, but no one is there to hear it, does it make a sounds?". Here, the sound is the experience, and the tree falling is the game. If no one hears it, then it doesn't fucking matter
+
+The reason why people play games is for the experience that it provides. That is what makes a game a game. 
+
+*We never see the truly see the output of our work, everyone has their own unique experience of the work. Something that is special to them and sharable* And we have to make a game that does this.
+
+Fuck, this seems hard. How do you make something that does something so abstract.
+
+**This connects to why deep listening is very important. I assume its bc you can understand what the people truly want? idk yet ig.**
+
+## Is This Unique to Games?
+
+No, everyone who works in entertainment has to consider, "How can you create something that will generate a certain experience when someone interacts with it".
+
+With other mediums, its often a linear story/path. But in games, it is usually a diverging path where the player gets to control their own story. Sometimes theres even randomness tossed in to further influence the story.
+
+This is the experience you are trying t chase.
+- the feeling of choice
+- the feeling of freedom
+- the feeling of responsibility
+- the feeling of accomplishment
+- the feeling of friendship
+
+Shit like this is stuff that you can only explore deeply through the interactivity of games.
+
+## Three practical Approaches to Chasing Rainbows
+
+How does one go about creating these experiences? How these experiences actually work under the hood. 
+
+### Psychology
+
+Scientific psychology works by thinking of the brain as a black box. Where as a scientist, you test things by giving stimuli and seeing what happens. But this does not tell us what actually goes on inside the box. As game designers, we won't need to follow the strict rules of reproducibility and absolute truth, instead we just need what is good enough to the truth. The study of psychology gives us a starting point to make inferences.
+
+### Anthropology
+
+The study of human beings and what they think and do. Studying the the similarities between people and why(culture, mental, physical). They often fully immerse themselves in the culture they want to study, allowing them to know what it truly "feels like". By being in their mind, you gain more insights then just observing from the outside.
+
+### Design
+
+Many designers focus thoroughly on a single sub category such as music or visual designers. It's hard to find a general rule of thumb or utilize these rules across boundaries. But still, anyone that that creates experiences can teach us something. We will try to build bridges between Psychology and Anthropology and Design. Use as many different ideas, use it like a **toolbox**.
