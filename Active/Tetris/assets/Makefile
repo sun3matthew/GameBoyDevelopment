@@ -58,8 +58,9 @@ regen:
 
 #AUTO-GENERATED
 
-../build/$(MAIN).gb: ../tmp/heapMemory.o ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/stackMemory.o ../tmp/rng.o ../tmp/math.o ../tmp/debugPrint.o ../tmp/memoryBank.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
+../build/$(MAIN).gb: ../tmp/gbStack.o ../tmp/heapMemory.o ../tmp/mem.o ../tmp/dmem.o ../tmp/utils.o ../tmp/input.o ../tmp/dma.o ../tmp/linkedList.o ../tmp/stackMemory.o ../tmp/rng.o ../tmp/math.o ../tmp/debugPrint.o ../tmp/memoryBank.o ../tmp/graphics.o ../tmp/tetrominos.o ../tmp/tetris.o ../tmp/piece.o ../tmp/vars.o ../tmp/header.o 
 	$(RGBLINK) -n ../build/$(MAIN).sym -m ../log/$(MAIN).map -o ../build/$(MAIN).gb \
+		../tmp/gbStack.o \
 		../tmp/heapMemory.o \
 		../tmp/mem.o \
 		../tmp/dmem.o \
@@ -80,7 +81,10 @@ regen:
 		../tmp/header.o
 	$(RGBFIX) $(RGBFIXFLAGS) ../build/$(MAIN).gb
 
-../tmp/heapMemory.o: lib/heapMemory.asm inc/heapMemory.inc inc/hardware.inc inc/memoryBank.inc
+../tmp/gbStack.o: lib/gbStack.asm
+	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/gbStack.o lib/gbStack.asm
+
+../tmp/heapMemory.o: lib/heapMemory.asm inc/heapMemory.inc inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/heapMemory.o lib/heapMemory.asm
 
 ../tmp/mem.o: lib/mem.asm inc/hardware.inc

@@ -8,6 +8,9 @@ SECTION "Header", ROM0[$150]
 	; Turn off interrupts
 	di
 
+	; Init stack pointer
+	ld sp, GBStackEnd
+
 	; Shut down audio circuitry
 		ld a, 0
 		ld [rNR52], a

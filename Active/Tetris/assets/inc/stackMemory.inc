@@ -3,7 +3,7 @@ INCLUDE "inc/memoryBank.inc"
 IF !DEF(STACK_INC) ;include guard
     DEF STACK_INC EQU 1
 
-DEF STACK_MEM_BANKS         EQU %10000000
+DEF STACK_MEM_BANKS          EQU %10000000
 
 DEF STACK_HEADER_SIZE        EQU $1 * $10
 
