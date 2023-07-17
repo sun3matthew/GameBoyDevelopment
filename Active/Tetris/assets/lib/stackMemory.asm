@@ -34,9 +34,9 @@ SECTION "STACK_MEMORY", ROM0
 ; @destroy a, hl
 StackResetBank::
     ld a, HIGH(STACK_START)
-    ld [hStackEndOfMemory], a
+    ldh [hStackEndOfMemory], a
     ld a, LOW(STACK_START)
-    ld [hStackEndOfMemory], a
+    ldh [hStackEndOfMemory + 1], a
 
     ; clear hram to zero
     ld d, 0
@@ -84,12 +84,6 @@ StackPush::
     ; calculate new low byte of memory
     ld a, STACK_HEADER_SIZE
     ldh [hStackEndOfMemory + 1], a
-    ret
-
-; Move to the next layer of the stack memory, without saving the current header
-; @destroy a
-StackPushNoSave::
-    StackPushNoSaveMacro
     ret
 
 ; Return to the previous layer of the stack memory

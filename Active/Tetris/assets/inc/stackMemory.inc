@@ -16,13 +16,14 @@ DEF STACK_START              EQU STACK_HEADER + STACK_HEADER_SIZE
 
 ; allocate memory in stack memory, make sure to set bank to the correct bank
 ; @param \1: size of memory to allocate
-; @return a:
+; @return a: low byte of address
+; @return hl: full address
 MACRO StackMallocMacro
     ldh a, [hStackEndOfMemory + 1]
+    ld l, a
     add \1
     ldh [hStackEndOfMemory + 1], a
 
-    ld l, a
     ldh a, [hStackEndOfMemory]
     ld h, a
 ENDM
@@ -33,7 +34,6 @@ MACRO StackPushNoSaveMacro
     ; save shadow header to current layer
     ldh a, [hStackEndOfMemory]
     inc a
-
     ldh [hStackEndOfMemory], a
 
     ld a, STACK_HEADER_SIZE
@@ -44,7 +44,15 @@ ENDM
 ; @param l: low byte of address to store
 ; @param \1: var number
 MACRO StackStoreAddressMacro
-    ldh [hStackLowBytes + \1], l
+    ld a, l
+    ldh [hStackLowBytes + \1], a
+ENDM
+
+; terminate sequence of stack memory
+; @destroy a
+MACRO StackZeroTerminateMacro
+    ld a, 0
+    ldh [hStackLowBytes + \1], a
 ENDM
 
 ; read address from stack memory
@@ -55,17 +63,6 @@ MACRO StackReadAddressMacro
     ld h, a
     ldh a, [hStackLowBytes + \1]
     ld l, a
-ENDM
-
-; read data from stack memory
-; @param \1: var number
-; @return hl: address of data
-MACRO StackReadDataMacro
-    StackReadAddressMacro \1
-    
-    ld a, [hli]
-    ld l, [hl]
-    ld h, a
 ENDM
 
 

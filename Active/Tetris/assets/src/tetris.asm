@@ -147,21 +147,96 @@ Main:
 	ld [rSVBK], a
 
 	StackMallocMacro 2
-	call DebugPrintRegisters
+	StackStoreAddressMacro 0
 
 	StackMallocMacro 4
-	call DebugPrintRegisters
+	StackStoreAddressMacro 1
 
 	StackMallocMacro 1
-	call DebugPrintRegisters
+	StackStoreAddressMacro 2
 
 	StackMallocMacro 8
+	StackStoreAddressMacro 3
+
+	StackZeroTerminateMacro 4
+
+	StackReadAddressMacro 2
+	ld [hl], $FF
+
+	StackReadAddressMacro 3
+	ld d, 0
+	ld bc, 8
+	call MemSet
+
+	call StackPush
+
+	StackMallocMacro 8
+	StackStoreAddressMacro 0
+
+	StackMallocMacro 6
+	StackStoreAddressMacro 1
+
+	ld e, $20
+	StackMallocMacro e
+	StackStoreAddressMacro 2
+
+
+	StackMallocMacro 2
+	StackMallocMacro 2
+	StackMallocMacro 2
+	StackStoreAddressMacro 4
+
+	StackZeroTerminateMacro 5
+
+	StackReadAddressMacro 2
+	ld d, 0
+	ld bc, $20
+	call MemSet
+
+	call StackPush
+	StackMallocMacro 8
+	StackStoreAddressMacro 2
+
+	StackZeroTerminateMacro 3
+
+	ld [hl], $FF
+
+	call StackPop
+
+	StackReadAddressMacro 2
+	ld d, $FF
+	ld bc, $10
+	call MemSet
+
+	call StackPop
+
+	StackReadAddressMacro 3
 	call DebugPrintRegisters
+
+	call StackPush
+
+	ld e, $20
+	StackMallocMacro e
+	StackStoreAddressMacro 0
+	
+	StackZeroTerminateMacro 1
+
+	StackReadAddressMacro 0
+	ld d, $FF
+	ld bc, $10
+	call MemSet
+
+	call StackPush
+
+
+
+	
 
 	ld a, [wFrameCounter]
 	inc a
 	cp 20
 	jp nz, .resetFrameEnd
+
 
 	ld a, [wCurrentY]
 	inc a
