@@ -12,16 +12,21 @@ The plan was to build a 3D game-engine in `C++`, but I realized that I did not k
 
 I ended up being again reminded of playing Pokemon Gold on the Gameboy Color. Something about it being a hand held console as well as the nostalgia brought me to it. After researching it and reading every page of the [Pandocs](https://gbdev.io/pandocs/) I was fully sure I wanted to create a game for it. It had just the right amount of hardware limitations that I would enjoy working around it creatively.
 
-I've also decided that I want to utilize this as a extra challenge to learn about the fundamentals of game design (*through reading a textbook & practice*). Making a game fun is what I struggle with the most. The limitations of the gameboy means that you can't just brute force a "fun" game into existence. Instead you have to go back to the basics and just make a game that is just simply fun, like the pioneers back in the day. More on this in my [notes](ArtOfGameDesign/notes.md) for the textbook [Art of game design](ArtOfGameDesign/art-of-game-design.pdf).
+I've also decided that I want to utilize this as a extra challenge to learn about the fundamentals of game design (*through reading a textbook & practice*). Making a game fun is what I struggle with the most. The limitations of the Gameboy make it so you can't just brute force a "fun" game into existence. Instead, you have to go back to the basics and just make a game that is just simply fun, like the pioneers back in the day. More on this in my [notes](ArtOfGameDesign/notes.md) for the textbook [Art of game design](ArtOfGameDesign/art-of-game-design.pdf).
 
 ## Goals
 
-It's probably a bad trait to have as a game developer but I always focus much more on the visual appeal and creativity of my games first. *This often comes with the issue that the games are not fun.* Still, I try maintain this way of development and I will continue that when developing for the Gameboy.
+/*
 
-My first priority is making a **visually stunning** game, this was something that I never saw in any of the other old Gameboy cartridges. Whether it be using a MBC just to store extra graphics to store every permutation to get around the OAM limits or making the game run at 8 fps on double speed mode to make my own graphics engine.
+It's probably a bad trait to have as a game developer but I always focus much more on the visual appeal and creativity of my games first. *This often comes with the issue that the games are not fun.* Still, I try to maintain this way of development and I will continue that when developing for the Gameboy.
 
-This may make the games much less of a game and instead a *experience* though, hopefully it does not come to this and the game would be both **visually stunning** and **fun**
+My first priority is making a **visually stunning** game, this was something that I never saw in any of the other old Gameboy cartridges. Whether it be using an MBC just to store extra graphics to store every permutation to get around the OAM limits or making the game run at 8 fps on double speed mode to make my own graphics engine.
 
+This may make the games much less of a game and instead an *experience* though, hopefully, it does not come to this and the game would be both **visually stunning** and **fun**
+
+*/
+
+EDIT: I will try to do the opposite of this actually, I will prioritize making the games fun as it is something that I still don't know how to do. There is no point in solely focusing on the one thing that I'm already good at. After all, you're only as strong as your weakest link.
 # Building
 
 To build the projects you need to have:
