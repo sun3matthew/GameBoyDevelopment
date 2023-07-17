@@ -2,7 +2,6 @@
 
 Documenting my exploration of making games for the Gameboy Color in assembly.
 
-
 This repository contains all of my projects that I have experimented with and have made. Within each project are graphics that I made as well as the tooling that I wrote to mainly do image processing as well as other post processing. Each project also contains a set of common programs that should be used like customizable modules.
 
 ## Why?
@@ -12,6 +11,8 @@ After doing "High Level" game development for 1 year with `Java` and 4 with `Uni
 The plan was to build a 3D game-engine in `C++`, but I realized that I did not know enough about the language as well as the math needed to do so. This pushed me to find some other outlet and I eventually was reminded the NES. But I had tried to do this in the past and found myself being servery limited creativity due to the RAM and ROM limitations. 
 
 I ended up being again reminded of playing Pokemon Gold on the Gameboy Color. Something about it being a hand held console as well as the nostalgia brought me to it. After researching it and reading every page of the [Pandocs](https://gbdev.io/pandocs/) I was fully sure I wanted to create a game for it. It had just the right amount of hardware limitations that I would enjoy working around it creatively.
+
+I've also decided that I want to utilize this as a extra challenge to learn about the fundamentals of game design (*through reading a textbook & practice*). Making a game fun is what I struggle with the most. The limitations of the gameboy means that you can't just brute force a "fun" game into existence. Instead you have to go back to the basics and just make a game that is just simply fun, like the pioneers back in the day. More on this in my [notes](ArtOfGameDesign/notes.md) for the textbook [Art of game design](ArtOfGameDesign/art-of-game-design.pdf).
 
 ## Goals
 
