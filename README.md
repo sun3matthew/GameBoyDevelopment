@@ -12,7 +12,7 @@ The plan was to build a 3D game-engine in `C++`, but I realized that I did not k
 
 I ended up being again reminded of playing Pokemon Gold on the Gameboy Color. Something about it being a hand held console as well as the nostalgia brought me to it. After researching it and reading every page of the [Pandocs](https://gbdev.io/pandocs/) I was fully sure I wanted to create a game for it. It had just the right amount of hardware limitations that I would enjoy working around it creatively.
 
-I've also decided that I want to utilize this as a extra challenge to learn about the fundamentals of game design (*through reading a textbook & practice*). Making a game fun is what I struggle with the most. The limitations of the gameboy means that you can't just brute force a "fun" game into existence. Instead you have to go back to the basics and just make a game that is just simply fun, like the pioneers back in the day. More on this in my [notes](ArtOfGameDesign/notes.md) for the textbook [Art of game design](ArtOfGameDesign/art-of-game-design.pdf).
+I've also decided that I want to utilize this as a extra challenge to learn about the fundamentals of game design (*through reading a textbook & practice*). Making a game fun is what I struggle with the most. The limitations of the Gameboy means that you can't just brute force a "fun" game into existence. Instead you have to go back to the basics and make a game that is just simply fun, like the pioneers back in the day. More on this in my [notes](ArtOfGameDesign/notes.md) for the textbook [Art of game design](ArtOfGameDesign/art-of-game-design.pdf).
 
 ## Goals
 
