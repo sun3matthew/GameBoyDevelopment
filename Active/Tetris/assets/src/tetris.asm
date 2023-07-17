@@ -1,5 +1,6 @@
 INCLUDE "inc/hardware.inc"
 INCLUDE "inc/dma.inc"
+INCLUDE "inc/stackMemory.inc"
 
 INCLUDE "inc/tetris.inc"
 
@@ -134,10 +135,28 @@ Main:
 	call ClearOldPeice
 	call StorePreviousPositions
 
+	ld a, 2
+	ld [rSVBK], a
+
 	call DebugPrintRegisters
 
 	call DebugPrint
 	db "asdfasdf THIS FUCK asdf", 0
+
+	ld a, STACK_MEM_BANK
+	ld [rSVBK], a
+
+	StackMallocMacro 2
+	call DebugPrintRegisters
+
+	StackMallocMacro 4
+	call DebugPrintRegisters
+
+	StackMallocMacro 1
+	call DebugPrintRegisters
+
+	StackMallocMacro 8
+	call DebugPrintRegisters
 
 	ld a, [wFrameCounter]
 	inc a

@@ -114,7 +114,7 @@ regen:
 ../tmp/math.o: lib/math.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/math.o lib/math.asm
 
-../tmp/debugPrint.o: lib/debugPrint.asm inc/memoryBank.inc inc/debugPrint.inc
+../tmp/debugPrint.o: lib/debugPrint.asm inc/hardware.inc inc/memoryBank.inc inc/debugPrint.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/debugPrint.o lib/debugPrint.asm
 
 ../tmp/memoryBank.o: lib/memoryBank.asm inc/hardware.inc
@@ -126,7 +126,7 @@ regen:
 ../tmp/tetrominos.o: src/tetrominos.asm
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetrominos.o src/tetrominos.asm
 
-../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/dma.inc inc/hardware.inc
+../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/stackMemory.inc inc/dma.inc inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
 ../tmp/piece.o: src/piece.asm inc/tetris.inc inc/dma.inc

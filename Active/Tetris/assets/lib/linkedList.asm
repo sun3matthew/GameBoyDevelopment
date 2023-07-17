@@ -1,7 +1,6 @@
 SECTION "Linked List", ROM0
 
 
-/*
 ; * List structure:
 ; 2 bytes for the head pointer
 
@@ -10,7 +9,7 @@ SECTION "Linked List", ROM0
 ; @destroy all
 LinkedListNew::
     ld de, 2
-    call malloc
+    call Malloc
     ld a, 0
     ld [hli], a
     ld [hl], a
@@ -22,7 +21,7 @@ LinkedListNew::
 ; @destroy all
 LinkedListDelete::
     push hl
-    call free
+    call Free
     pop hl
 
 	ld a, [hli]
@@ -193,7 +192,7 @@ LinkedListNodeRemove::
         dec hl
         dec hl
 
-        ; store address (to free later)
+        ; store address (to Free later)
         ld b, h
         ld c, l
 
@@ -218,10 +217,10 @@ LinkedListNodeRemove::
             inc hl
             ld [hl], e
 
-            ; free node
+            ; Free node
             ld h, b
             ld l, c
-            call free
+            call Free
 
             ; same head
             pop hl
@@ -232,7 +231,7 @@ LinkedListNodeRemove::
 
             ; no prev node, this is the head
             pop hl
-            call free
+            call Free
 
             ld h, d
             ld l, e
@@ -248,6 +247,5 @@ LinkedListNodeRemove::
 ; @destroy all
 LinkedListNodeAlloc:
 	ld de, 4
-	call malloc
+	call Malloc
 	ret
-*/

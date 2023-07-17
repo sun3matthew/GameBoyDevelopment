@@ -4,4 +4,3 @@ SECTION "GB_STACK", WRAM0, ALIGN[4]
     GBStack:
         ds $40
     GBStackEnd::
-

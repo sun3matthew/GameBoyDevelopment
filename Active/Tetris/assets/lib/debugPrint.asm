@@ -1,5 +1,6 @@
 INCLUDE "inc/debugPrint.inc"
 INCLUDE "inc/memoryBank.inc"
+INCLUDE "inc/hardware.inc"
 
 SECTION "DEBUG_PRINT", ROM0
 
@@ -76,12 +77,10 @@ CopyRegistersFromBuffer:
 DebugPrint::
     call CopyRegistersIntoBuffer
 
-    ; JP n16 -> 3 bytes
-
     pop hl ; return address
     ld d ,h
     ld e, l
-    
+
     ; loop fowards till null byte
     ld c, 0
     .loop
@@ -91,6 +90,16 @@ DebugPrint::
         jp nz, .loop
 
     push hl
+
+    ; save current bank
+        ld a, [rSVBK]
+        add 8
+        push af
+
+        ; switch to debug bank
+        ld a, DEBUG_MEM_BANK
+        ld [rSVBK], a
+    
 
     dec c
 
@@ -129,6 +138,10 @@ DebugPrint::
     .skip2:
 
     call UpdateDebugLog
+
+    ; switch back to old bank
+    pop af
+    ld [rSVBK], a
 
     call CopyRegistersFromBuffer
     ret
@@ -182,6 +195,15 @@ UpdateDebugLog:
 ; @destroy all
 DebugPrintRegisters::
     call CopyRegistersIntoBuffer
+    
+    ; save current bank
+    ld a, [rSVBK]
+    add 8
+    push af
+
+    ; switch to debug bank
+    ld a, DEBUG_MEM_BANK
+    ld [rSVBK], a
 
     ld hl, wAddressCounter
     ld a, [hli]
@@ -243,6 +265,11 @@ DebugPrintRegisters::
     ld [hl], e
 
     call UpdateDebugLog
+
+
+    ; switch back to old bank
+    pop af
+    ld [rSVBK], a
 
     call CopyRegistersFromBuffer
     ret

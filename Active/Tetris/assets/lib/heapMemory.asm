@@ -520,6 +520,8 @@ HeapMalloc::
 ; free memory in wram bank, make sure to set bank to the correct bank
 ; @param hl: address to free
 ; @destroy all
+HeapFreeAbstract::
+    pop hl
 HeapFree::
     ; this is the hard part..
 
