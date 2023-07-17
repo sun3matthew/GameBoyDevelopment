@@ -20,6 +20,8 @@ SECTION "Vars", WRAM0
     wMoveTimersRight:: db
     wMoveTimersDown:: db
 
+    wNextPiece:: db
+
 SECTION "Piece Info", WRAM0, ALIGN[4]
     wPieceInfo:: ds 2*4*4*NUM_PIECES
 

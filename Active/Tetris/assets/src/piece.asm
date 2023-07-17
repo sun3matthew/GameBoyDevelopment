@@ -1,10 +1,13 @@
 INCLUDE "inc/dma.inc"
 INCLUDE "inc/tetris.inc"
+INCLUDE "inc/stackMemory.inc"
+INCLUDE "inc/hardware.inc"
 
 
 SECTION "Piece", ROM0
 GeneratePiece::
 	call RandPiece
+
 	; a = random Piece from 0 to 6
 	ld hl, wCurrentPiece
 	ld [hl], a
@@ -24,6 +27,8 @@ GeneratePiece::
 	ld [hl], a
 
 	call ShiftPieceLoc
+
+	call DrawNextPiece
 	ret
 
 ; get the y coord of the bottom of the current Piece
@@ -118,6 +123,7 @@ DrawPieceOnBoard::
 		jp nz, .loop
 	ret	
 
+
 DrawTileOnBoard:
 	; de = xy
 	call GetScreenIdx
@@ -175,16 +181,11 @@ GetScreenIdx::
 	ld b, 0
 	ld c, e
 	; bc *= 32
-	sla c
-	rl b
-	sla c
-	rl b
-	sla c
-	rl b
-	sla c
-	rl b
-	sla c
-	rl b
+	
+	REPT 5
+		sla c
+		rl b
+	ENDR
 
 	; hl += bc
 	ld a, l
@@ -292,12 +293,120 @@ InitPieceInfo::
 	ret
 
 ; Get a random Piece
-; @destroy hl
+; @destroy hl, d
 ; @return a
-RandPiece:
+RandPiece::
 	call Rand
 	ld a, l
 	and %00000111
 	cp NUM_PIECES
-	jp z, RandPiece
+	jr z, RandPiece
+	ld e, a
+	ld a, [wNextPiece]
+	ld d, a
+	ld a, e
+	ld [wNextPiece], a
+	ld a, d
+	ret
+
+
+DrawNextPiece::
+	ld b, 0
+	ld a, [wNextPiece]
+	ld c, a
+
+	REPT 6
+		sla c
+		rl b
+	ENDR
+
+
+	ld hl, Pieces
+	ld a, c
+	add l
+	ld l, a
+	ld a, h
+	adc b
+	ld h, a
+
+	ld d, h
+	ld e, l
+
+	StackMallocMacro 2 ; address of piece info
+	StackStoreAddressMacro 0 
+	ld [hl], d
+	inc hl
+	ld [hl], e
+
+	ld de, $C0ED
+	ld b, 4
+	.loop1
+		push bc
+		push de
+		ld b, 4
+		.loop2
+			StackReadAddressMacro 0
+			ld a, [hli]
+			ld l, [hl]
+			ld h, a
+
+			ld a, [hli]
+
+			push af
+			push de
+			push hl
+			StackReadAddressMacro 0
+			pop de
+			ld [hl], d
+			inc hl
+			ld [hl], e
+
+			pop de
+			pop af
+
+
+			cp 0
+			jr z, .Black
+				ld a, [wNextPiece]
+				call GetTileIdx
+			jr .ColorFound
+			.Black:
+				ld a, 1
+			.ColorFound
+
+			ld h, d
+			ld l, e
+
+			ld [hl], a
+			push af
+
+			ld a, l
+			add LOW(SSCRNS)
+			ld l, a
+			ld a, h
+			adc HIGH(SSCRNS)
+			ld h, a
+
+			pop af
+			ld [hl], a
+
+			inc de
+
+			dec b
+			jr nz, .loop2
+		
+		pop de
+		ld a, e
+		add SCRN_VX_B
+		ld e, a
+		ld a, d
+		adc 0
+		ld d, a
+
+		pop bc
+		dec b
+		jp nz, .loop1
+
+
+
 	ret

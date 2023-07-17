@@ -43,6 +43,7 @@ ENDM
 ; allocate memory in stack memory, make sure to set bank to the correct bank
 ; @param l: low byte of address to store
 ; @param \1: var number
+; @destroy a
 MACRO StackStoreAddressMacro
     ld a, l
     ldh [hStackLowBytes + \1], a
@@ -58,6 +59,7 @@ ENDM
 ; read address from stack memory
 ; @param \1: var number
 ; @return hl: address the address of data
+; @destroy a
 MACRO StackReadAddressMacro
     ldh a, [hStackEndOfMemory]
     ld h, a

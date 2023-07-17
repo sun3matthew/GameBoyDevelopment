@@ -124,6 +124,7 @@ SECTION "Header", ROM0[$150]
 	ld [rLCDC], a
 
 
+call RandPiece
 call GeneratePiece
 call DrawPieceOnBoard
 
@@ -137,100 +138,6 @@ Main:
 
 	ld a, 2
 	ld [rSVBK], a
-
-	call DebugPrintRegisters
-
-	call DebugPrint
-	db "asdfasdf THIS FUCK asdf", 0
-
-	ld a, STACK_MEM_BANK
-	ld [rSVBK], a
-
-	StackMallocMacro 2
-	StackStoreAddressMacro 0
-
-	StackMallocMacro 4
-	StackStoreAddressMacro 1
-
-	StackMallocMacro 1
-	StackStoreAddressMacro 2
-
-	StackMallocMacro 8
-	StackStoreAddressMacro 3
-
-	StackZeroTerminateMacro 4
-
-	StackReadAddressMacro 2
-	ld [hl], $FF
-
-	StackReadAddressMacro 3
-	ld d, 0
-	ld bc, 8
-	call MemSet
-
-	call StackPush
-
-	StackMallocMacro 8
-	StackStoreAddressMacro 0
-
-	StackMallocMacro 6
-	StackStoreAddressMacro 1
-
-	ld e, $20
-	StackMallocMacro e
-	StackStoreAddressMacro 2
-
-
-	StackMallocMacro 2
-	StackMallocMacro 2
-	StackMallocMacro 2
-	StackStoreAddressMacro 4
-
-	StackZeroTerminateMacro 5
-
-	StackReadAddressMacro 2
-	ld d, 0
-	ld bc, $20
-	call MemSet
-
-	call StackPush
-	StackMallocMacro 8
-	StackStoreAddressMacro 2
-
-	StackZeroTerminateMacro 3
-
-	ld [hl], $FF
-
-	call StackPop
-
-	StackReadAddressMacro 2
-	ld d, $FF
-	ld bc, $10
-	call MemSet
-
-	call StackPop
-
-	StackReadAddressMacro 3
-	call DebugPrintRegisters
-
-	call StackPush
-
-	ld e, $20
-	StackMallocMacro e
-	StackStoreAddressMacro 0
-	
-	StackZeroTerminateMacro 1
-
-	StackReadAddressMacro 0
-	ld d, $FF
-	ld bc, $10
-	call MemSet
-
-	call StackPush
-
-
-
-	
 
 	ld a, [wFrameCounter]
 	inc a
@@ -484,7 +391,234 @@ ClearOldPeice:
 
 
 CheckForFullRows:
-	ret
+	ld a, STACK_MEM_BANK
+	ld [rSVBK], a
+
+	StackMallocMacro 4 ; 1 byte for each row, zero terminated
+	StackStoreAddressMacro 0
+
 	ld hl, wPieceLoc
 	ld b, 4
+
+
 	.loop
+		ld a, [hli]
+		ld d, a
+		ld a, [hli]
+		ld e, a
+
+		push hl
+		push bc
+
+			; de = xy
+
+			ld hl, wShadowSCN_B0
+			ld b, 0
+			ld c, e
+			; bc *= 32
+			
+			REPT 5
+				sla c
+				rl b
+			ENDR
+
+			ld a, l
+			add c
+			ld l, a
+			ld a, h
+			adc b
+			ld h, a
+
+			ld a, l
+			add BOARD_LEFT + 1
+			ld l, a
+			ld a, h
+			adc 0
+			ld h, a
+
+			; hl = screen idx
+
+			ld b, BOARD_TWIDTH
+			.RowLoop
+				ld a, [hli]
+				cp 1
+				jr z, .NotFullRow
+
+				dec b
+				jr nz, .RowLoop
+			jr .FullRow
+
+			.NotFullRow
+			ld e, $ff
+
+			.FullRow
+		pop bc
+
+		StackReadAddressMacro 0
+		ld a, b
+		dec a
+		add l
+		ld l, a
+		xor a
+		adc h
+		ld h, a
+
+		ld [hl], e
+
+		pop hl
+
+		dec b
+		jp nz, .loop
+
+	ld b, BOARD_HEIGHT
+
+	; find max row
+	StackReadAddressMacro 0
+	ld b, 5
+
+	ld c, 0
+	.findMaxRowLoop
+		dec b
+		jr z, .findMaxRowLoopE
+
+		ld a, [hli]
+		cp $ff
+		jr z, .findMaxRowLoop
+		cp c
+		jr c, .findMaxRowLoop
+		ld c, a
+		jr .findMaxRowLoop
+	.findMaxRowLoopE
+	
+	ld a, c
+	cp 0
+	jr nz, .clearRows
+		ret
+	.clearRows
+
+	push af
+
+	StackMallocMacro 2 ; address of the current row to clear
+	StackStoreAddressMacro 1
+	; calculate lowest row idx
+		ld de, wShadowSCN_B0
+		ld b, 0
+
+		; bc *= 32
+		REPT 5
+			sla c
+			rl b
+		ENDR
+
+		ld a, e
+		add c
+		ld e, a
+		ld a, d
+		adc b
+		ld d, a
+
+		ld a, e
+		add BOARD_LEFT + 1
+		ld e, a
+		ld a, d
+		adc 0
+		ld d, a
+
+		ld [hl], d
+		inc hl
+		ld [hl], e
+
+
+	
+	pop af
+	ld b, a
+	dec b
+	.RowClearLoop
+		push bc
+
+
+			; de = xy
+			ld de, wShadowSCN_B0
+			ld c, b
+			ld b, 0
+			; bc *= 32
+			
+			REPT 5
+				sla c
+				rl b
+			ENDR
+
+			ld a, e
+			add c
+			ld e, a
+			ld a, d
+			adc b
+			ld d, a
+
+			ld a, e
+			add BOARD_LEFT + 1
+			ld e, a
+			ld a, d
+			adc 0
+			ld d, a
+
+			StackReadAddressMacro 1
+			ld a, [hli]
+			ld l, [hl]
+			ld h, a
+
+			ld bc, BOARD_TWIDTH
+
+			push de
+			push hl
+
+			call MemcopyLen
+
+			pop hl
+			pop de
+
+			ld a, l
+			add LOW(SSCRNS)
+			ld l, a
+			ld a, h
+			adc HIGH(SSCRNS)
+			ld h, a
+
+			ld a, e
+			add LOW(SSCRNS)
+			ld e, a
+			ld a, d
+			adc HIGH(SSCRNS)
+			ld d, a
+
+			ld bc, BOARD_TWIDTH
+			call MemcopyLen
+
+		pop bc
+
+		StackReadAddressMacro 0
+		ld c, 4
+		.isCurrentRowAlsoClear
+			ld a, [hli]
+			cp b
+			jp z, .skipMoveRow
+			dec c
+			jr nz, .isCurrentRowAlsoClear
+
+		StackReadAddressMacro 1
+		ld a, [hli]
+		ld d, a
+		ld a, [hl]
+
+		sub SCRN_VX_B
+		ld [hld], a
+		ld a, d
+		sbc 0
+		ld [hl], a
+
+		.skipMoveRow
+
+		dec b
+		jp nz, .RowClearLoop
+
+	ret	

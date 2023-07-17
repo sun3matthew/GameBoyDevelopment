@@ -64,7 +64,7 @@ The other commands can be interpreted from the Makefile
 # Projects
 | Name                           | Description                                                           | Screenshot                                                                                                                                |
 |----------------------|-----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-|Tetris (WIP)       | Tetris clone to learn the development from start to end & building the basics of the *engine*                                        |
+|Tetris       | Tetris clone to learn the development from start to end & building the basics of the *engine*                                        |![Unbricked](https://github.com/sun3matthew/GameBoyDevelopment/blob/main/Images/Tetris.png?raw=true)
 |Unbricked       | Leaning about graphics                                        |![Unbricked](https://github.com/sun3matthew/GameBoyDevelopment/blob/main/Images/Unbricked.png?raw=true)              |
 |HelloWorld       | Leaning the basics                                         |![HelloWorld](https://github.com/sun3matthew/GameBoyDevelopment/blob/main/Images/HelloWorld.png?raw=true)              |
 

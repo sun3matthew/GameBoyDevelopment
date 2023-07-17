@@ -34,6 +34,7 @@ I'm also trying to justify why I'm making games on the gameboy, since I feel lik
     - [Psychology](#psychology)
     - [Anthropology](#anthropology)
     - [Design](#design)
+  - [Introspection: Powers, Perils, and Practice](#introspection-powers-perils-and-practice)
 
 ` `  
 ` `  
@@ -175,3 +176,6 @@ The study of human beings and what they think and do. Studying the the similarit
 ### Design
 
 Many designers focus thoroughly on a single sub category such as music or visual designers. It's hard to find a general rule of thumb or utilize these rules across boundaries. But still, anyone that that creates experiences can teach us something. We will try to build bridges between Psychology and Anthropology and Design. Use as many different ideas, use it like a **toolbox**.
+
+## Introspection: Powers, Perils, and Practice
+

@@ -120,7 +120,7 @@ regen:
 ../tmp/memoryBank.o: lib/memoryBank.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/memoryBank.o lib/memoryBank.asm
 
-../tmp/graphics.o: src/graphics.asm graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
+../tmp/graphics.o: src/graphics.asm graphics/bin/BG-4.2bpp graphics/bin/BG-2.2bpp graphics/bin/BG-3.2bpp graphics/bin/BG-1.2bpp graphics/bin/Tetris.2bpp graphics/bin/Tetris-2.2bpp graphics/bin/BG-2.pal graphics/bin/BG-3.pal graphics/bin/BG-1.pal graphics/bin/Tetris-p2.pal graphics/bin/Tetris-p3.pal graphics/bin/Tetris-p1.pal graphics/bin/Tetris-p4.pal graphics/bin/Tetris-p5.pal graphics/bin/Tetris-p6.pal
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/graphics.o src/graphics.asm
 
 ../tmp/tetrominos.o: src/tetrominos.asm
@@ -129,7 +129,7 @@ regen:
 ../tmp/tetris.o: src/tetris.asm inc/tetris.inc inc/stackMemory.inc inc/dma.inc inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/tetris.o src/tetris.asm
 
-../tmp/piece.o: src/piece.asm inc/tetris.inc inc/dma.inc
+../tmp/piece.o: src/piece.asm inc/tetris.inc inc/stackMemory.inc inc/dma.inc inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/piece.o src/piece.asm
 
 ../tmp/vars.o: src/vars.asm inc/tetris.inc
@@ -138,6 +138,9 @@ regen:
 ../tmp/header.o: src/header.asm inc/hardware.inc
 	$(RGBASM) $(RGBASMFLAGS) -o ../tmp/header.o src/header.asm
 
+
+graphics/bin/BG-4.2bpp graphics/bin/BG-4.pal: graphics/raw/BG-4.png
+	java -cp ../tools/graphics PngToBin graphics/raw/BG-4.png graphics/bin/BG-4.2bpp graphics/bin/BG-4.pal
 
 graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal: graphics/raw/BG-2.png
 	java -cp ../tools/graphics PngToBin graphics/raw/BG-2.png graphics/bin/BG-2.2bpp graphics/bin/BG-2.pal

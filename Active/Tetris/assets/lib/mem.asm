@@ -29,7 +29,7 @@ MemcopyLen::
     ld a, b
     or a, c
 
-    jp nz, MemcopyLen
+    jr nz, MemcopyLen
     ret
     
 ; Copy bytes from one area to another (reverse).
@@ -47,7 +47,7 @@ MemcopyLenR::
     ld a, b
     or a, c
 
-    jp nz, MemcopyLenR
+    jr nz, MemcopyLenR
     ret
 
 ; Copy bytes from one area to another.
@@ -78,5 +78,5 @@ MemSet::
     dec bc
     ld a, b
     or a, c
-    jp nz, MemSet
+    jr nz, MemSet
     ret

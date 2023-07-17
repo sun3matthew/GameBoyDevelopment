@@ -248,7 +248,12 @@ DebugPrintRegisters::
     ld [hl], $FF
     inc hl
 
+    pop af
+    push af
+    ld [rSVBK], a
+
     push hl
+
     ld a, [wTempDebugHL]
     ld h, a
     ld a, [wTempDebugHL + 1]
@@ -259,9 +264,12 @@ DebugPrintRegisters::
     ld e, [hl]
     pop hl
 
+    ; switch to debug bank
+    ld a, DEBUG_MEM_BANK
+    ld [rSVBK], a
+
     ld [hl], d
     inc hl
-
     ld [hl], e
 
     call UpdateDebugLog
