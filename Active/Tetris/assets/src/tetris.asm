@@ -34,14 +34,17 @@ SECTION "Header", ROM0[$150]
 	; init debug print
 	call DebugPrintReset
 
-	; init vars
-	call InitVars
-	
 	; clean up the OAM
 	ld d, 0
     ld bc, SOAMS
     ld hl, _OAMRAM
 	call MemSet
+
+ResetGame:
+
+	; init vars
+	call InitVars
+	
     
 
 ; create a object
@@ -70,6 +73,9 @@ SECTION "Header", ROM0[$150]
 
 
 ; Copy the tilemap
+	ld a, 0
+	ld [rVBK], a
+
     ld de, Tilemap
     ld bc, TilemapEnd
     ld hl, _SCRN0
@@ -112,6 +118,7 @@ SECTION "Header", ROM0[$150]
 		ld de, rOCPD
 		call PaletteCopy
 
+
 ; Init DMA
 	call InitDMA
 
@@ -135,6 +142,8 @@ Main:
 	call UpdateKeys
 	call ClearOldPeice
 	call StorePreviousPositions
+
+	call HandleInputsOther
 
 	ld a, 2
 	ld [rSVBK], a
@@ -375,6 +384,27 @@ HandleInputsC:
 		ld [wCurrentY], a
 		ret
 	
+	.end
+	ret
+
+HandleInputsOther:
+	.Start
+	ld a, [wNewKeys]
+	bit PADB_START, a
+	jp z, .end
+
+		; Shut down audio circuitry
+		ld a, 0
+		ld [rNR52], a
+
+		; Turn off lcd on blank
+		call WaitVBlank
+
+		; Turn the LCD off
+		ld a, 0
+		ld [rLCDC], a
+
+		jp ResetGame
 	.end
 	ret
 
