@@ -2,17 +2,9 @@
 
 Notes for the textbook [Art of game design](./art-of-game-design.pdf) by Jesse Schell
 
-` `  
-` `  
-
 I've realized I suck at making games, but I'd also rather choose a class on compiler design then game design. So I'm just going to read this for fun in my free time.
 
 I'm also trying to justify why I'm making games on the gameboy, since I feel like computers now are just so fast where any tricks I learn with assembly will be marginal. Maybe it will fundamentally change how I code but I can't guarantee that. So the justification is that it is a challenge for me, where I'll try to make fun games with the limited resources of the gameboy. 
-
-` `  
-` `  
-` `  
-` `  
 
 # Table of Contents
 - [The Art of Game Design Notes](#the-art-of-game-design-notes)
@@ -35,17 +27,19 @@ I'm also trying to justify why I'm making games on the gameboy, since I feel lik
     - [Anthropology](#anthropology)
     - [Design](#design)
   - [Introspection: Powers, Perils, and Practice](#introspection-powers-perils-and-practice)
+    - [Peril #1: Introspection Can Leave to False Conclusions About Reality](#peril-1-introspection-can-leave-to-false-conclusions-about-reality)
+    - [Peril #2: What is True of My Experiences May Not be True for Others](#peril-2-what-is-true-of-my-experiences-may-not-be-true-for-others)
+  - [Dissect Your Feelings](#dissect-your-feelings)
+  - [Defeating Heisenberg](#defeating-heisenberg)
+    - [Analyze Memories](#analyze-memories)
+    - [Two Passes](#two-passes)
+    - [Sneak Glances](#sneak-glances)
+    - [Observe Silently](#observe-silently)
 
-` `  
-` `  
-` `  
 
 # Lenses
 1. [???](#lenses)
 
-` `  
-` `  
-` `  
 
 # Prologue - 0
 
@@ -126,10 +120,6 @@ I feel like for my purposes, will focus on Audience, Game and Self. I'll deal wi
 
 Like fls said, people aren't born gifted, they worked their asses off to become gifted.
 
-` `  
-` `  
-` `  
-
 # The Designer Creates an *Experience* - 2
 
 "What is the game designer's goal?", what is the magic that happens when the game is played? The experience. Each persons experience is unique. Aka, focus on each player's lasting impression on the game and how they interacted with it.
@@ -179,3 +169,42 @@ Many designers focus thoroughly on a single sub category such as music or visual
 
 ## Introspection: Powers, Perils, and Practice
 
+All of the three approaches all use introspection. *The act of examining your own thoughts and feelings*. Aka your experiences. This allows you to make **rapid and decisive judgments** about why the game isn't working and why.
+
+*Peril - serious and immediate danger*
+
+### Peril #1: Introspection Can Leave to False Conclusions About Reality
+
+Our own experiences may not always be completely true. People often very large architectures of ideas which makes it seem true but it may be build of off questionable logic. We don't need the full truth tho, we just need to be good enough. When dealing with the human heart and mind, use introspection. Trust your feelings about the becomes a experience for someone else.
+
+### Peril #2: What is True of My Experiences May Not be True for Others
+
+Things are subjective, with the trap being "I like playing this game so it must be good." The two ways of getting around this is to only make games you like. Where it lets ensure the game is good. But this limits your audience heavily, especially if you have a niche taste. You can also only trust play-testers, which makes sure the game will be fun into production. But early on, there is no game to play-test, and they may not fully understand it if it's not a finished game (they may throw out a ugly duckling). By listening to your own experiences and others, you can see how their experiences differ. If you can put yourself in the mind of your audience, you can make predictions on their experience of the game.
+
+## Dissect Your Feelings
+
+Ok, side tangent, I don't think I'm in touch well enough with my emotions to see the value of this. Maybe I'm just better suited as a worker bee. I'll see tho.
+
+It's not enough to know if you just like or don't like something. You need to be able to narrow it down to exactly what you like or don't like about it. Otherwise you don't know what to change in a bad game or what to take away from a good one. Seeing the differences in experiences, allows you to know the type of experience your game is supposed to create.
+
+## Defeating Heisenberg
+
+Intreating, like quantum mechanics or some shit. How do you observe a experience without effecting it since the act of observing is a experience. Oh shit, it is quantum, I didn't know the heisenberg principle was this. If you are enjoying yourself and try to observe yourself, you'll end up not having as much fun. 
+
+### Analyze Memories
+
+It's hard to observe while experiencing since then half the brain has to be allocated for that. But memories don't change that much, they may be imperfect but its good enough. Work with fresh memories too. 
+
+Intreating, like when you're playing a game, don't play it and actively try to analyze it. But just know that you will right after you finish so you can strategically remember anchors instead.
+
+### Two Passes
+
+Do something twice. First time, just experience it have a clean mind. Second time, analyzing everything, take notes even.
+
+### Sneak Glances
+
+Its like seeing someone hot sitting across from you. If you stare, they'll notice. Instead just glance without drawing attention. Don't interrupt the train of thought. It's something like "Exciting enough? Yea, ok." instead of something deeper.
+
+### Observe Silently
+
+This seems hard, it's essentially saying to have the other part of your brain observe so silently that it doesn't bother the main. I guess just practice it. Like when you're watching a video, try to silently observe.
